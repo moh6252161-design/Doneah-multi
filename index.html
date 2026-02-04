@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Marché Express Guinée</title>
+<style>
+body {font-family: Arial, sans-serif; margin:0; background:#f5f5f5;}
+header {background:#0a7cff; color:white; padding:15px; text-align:center;}
+.search-bar {padding:10px; text-align:center; background:white;}
+.search-bar input {width:90%; padding:10px; border-radius:5px; border:1px solid #ccc;}
+.products {display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:10px; padding:10px;}
+.product {background:white; padding:10px; border-radius:8px; text-align:center; box-shadow:0 0 5px rgba(0,0,0,0.1);}
+.product img {width:100%; border-radius:8px;}
+button {background:#0a7cff; color:white; border:none; padding:8px 12px; border-radius:5px; cursor:pointer;}
+.ai-box {position:fixed; bottom:15px; right:15px; background:white; border-radius:10px; box-shadow:0 0 10px rgba(0,0,0,0.2); width:250px;}
+.ai-header {background:#0a7cff; color:white; padding:8px; border-radius:10px 10px 0 0;}
+.ai-body {padding:8px; font-size:14px;}
+footer {text-align:center; padding:15px; font-size:14px;}
+</style>
+</head>
+<body>
+
+<header>
+<h2>🛒 Marché Express Guinée</h2>
+Livraison depuis Conakry vers Kindia, Mamou, Labé, Kankan, Freetown, Bamako, Dakar
+</header>
+
+<div class="search-bar">
+<input type="text" placeholder="🔍 Rechercher un produit...">
+</div>
+
+<section class="products">
+
+<div class="product">
+<img src="https://i.imgur.com/2DhmtJ4.jpg">
+<h4>Bazin Riche</h4>
+<p>350 000 GNF</p>
+<button onclick="commander('Bazin Riche')">Commander</button>
+</div>
+
+<div class="product">
+<img src="https://i.imgur.com/QkIa5tT.jpg">
+<h4>Chaussures Mode</h4>
+<p>280 000 GNF</p>
+<button onclick="commander('Chaussures Mode')">Commander</button>
+</div>
+
+<div class="product">
+<img src="https://i.imgur.com/8Km9tLL.jpg">
+<h4>Lunettes Stylées</h4>
+<p>120 000 GNF</p>
+<button onclick="commander('Lunettes Stylées')">Commander</button>
+</div>
+
+<div class="product">
+<img src="https://i.imgur.com/yXOvdOS.jpg">
+<h4>Maillot Sport</h4>
+<p>180 000 GNF</p>
+<button onclick="commander('Maillot Sport')">Commander</button>
+</div>
+
+<div class="product">
+<img src="https://i.imgur.com/1X6R8bK.jpg">
+<h4>Képi Classe</h4>
+<p>90 000 GNF</p>
+<button onclick="commander('Képi Classe')">Commander</button>
+</div>
+
+</section>
+
+<footer>
+📦 Tous les colis quittent Conakry et sont déposés à la gare routière de votre ville.
+</footer>
+
+<!-- Assistant IA visible partout -->
+<div class="ai-box">
+<div class="ai-header">🤖 Assistant Marché Express</div>
+<div class="ai-body">
+Bonjour 👋  
+Je peux vous aider à choisir un produit.  
+Cliquez sur "Commander" pour passer votre demande.
+</div>
+</div>
+
+<script>
+function commander(produit){
+let nom = prompt("Nom du client :");
+let numero = prompt("Numéro WhatsApp :");
+let ville = prompt("Ville de réception : Kindia, Mamou, Labé, Kankan, Freetown, Bamako, Dakar");
+let receveur = prompt("Nom du receveur :");
+let numReceveur = prompt("Numéro du receveur :");
+
+let message = `Bonjour, je veux commander : ${produit}
+Nom: ${nom}
+Mon numéro: ${numero}
+Ville: ${ville}
+Receveur: ${receveur}
+Numéro receveur: ${numReceveur}`;
+
+window.open(`https://wa.me/224XXXXXXXXX?text=${encodeURIComponent(message)}`);
+}
+</script>
+
+</body>
+</html>

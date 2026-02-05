@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Papasta Market</title>
+
+<style>
+body{font-family:Arial;background:#ff0000;color:white;margin:0}
+header{background:#800000;padding:20px;text-align:center;font-size:26px;font-weight:bold}
+nav{position:fixed;top:100px;left:10px;z-index:1000}
+#menuBtn{font-size:28px;padding:18px 24px}
+#menu{display:none;background:#cc0000;padding:25px;width:380px;border-radius:12px}
+#menu button{width:100%;padding:20px;font-size:20px;margin-bottom:18px;border-radius:10px;background:#800000;color:white;border:none}
+section{display:none;padding:20px;margin-top:120px}
+.produit{background:#ff6666;padding:12px;margin:10px;width:210px;display:inline-block;text-align:center;border-radius:8px}
+.produit img{width:160px;height:160px;object-fit:cover}
+input,select{width:95%;padding:14px;font-size:18px;margin-bottom:12px;border-radius:8px;border:none}
+button{padding:12px;font-size:16px;background:#800000;color:white;border:none;border-radius:6px}
+.panier-item{background:#990000;padding:10px;margin-bottom:8px;border-radius:6px}
+.ok{background:green;padding:12px;margin-top:12px;text-align:center;font-size:18px}
+</style>
+</head>
+
+<body>
+
+<header>PAPASTA MARKET</header>
+
+<nav>
+<button id="menuBtn">☰ MENU</button>
+<div id="menu">
+<button data-go="produits">Produits</button>
+<button data-go="panier">Panier</button>
+<button data-go="vendeur">Vendeur</button>
+<button data-go="admin">Admin</button>
+<button id="closeMenu">❌ Fermer</button>
+</div>
+</nav>
+
+<section id="produits">
+<h2>Produits</h2>
+<input id="recherche" placeholder="Rechercher un produit">
+<div id="listeProduits"></div>
+</section>
+
+<section id="panier">
+<h2>Panier</h2>
+<div id="listePanier"></div>
+<p>Total : <span id="total">0</span> FG</p>
+<p>Frais livraison : <span id="frais">0</span> FG</p>
+<p><b>Total à payer : <span id="grandTotal">0</span> FG</b></p>
+
+<input id="clientNom" placeholder="Nom client">
+<input id="clientNumero" placeholder="Numéro client">
+<input id="recepteurNom" placeholder="Nom récepteur">
+<input id="recepteurNumero" placeholder="Numéro récepteur">
+<select id="ville"></select>
+
+<button id="valider">Valider la commande</button>
+<div id="ok"></div>
+</section>
+
+<section id="vendeur">
+<h2>Espace Vendeur</h2>
+<input id="vNom" placeholder="Nom vendeur">
+<input id="vPass" type="password" placeholder="Mot de passe (lettres + chiffres)">
+<button id="connectVendeur">Connexion</button>
+
+<div id="ajoutProduit" style="display:none">
+<input id="pNom" placeholder="Nom produit">
+<input id="pPrix" type="number" placeholder="Prix">
+<input id="pImage" type="file">
+<button id="ajouterProduit">Ajouter</button>
+</div>
+</section>
+
+<section id="admin">
+<h2>Admin</h2>
+<input id="adminUser" placeholder="Utilisateur">
+<input id="adminPass" type="password" placeholder="Mot de passe">
+<button id="loginAdmin">Connexion</button>
+<div id="adminCommandes"></div>
+</section>
+
+<script>
+document.addEventListener("DOMContentLoaded",()=>{
+
+const menu=document.getElementById("menu");
+const menuBtn=document.getElementById("menuBtn");
+const closeMenu=document.getElementById("closeMenu");
+
+menuBtn.onclick=()=>menu.style.display="block";
+closeMenu.onclick=()=>menu.style.display="none";
+
+document.querySelectorAll("[data-go]").forEach(b=>{
+b.onclick=()=>{
+document.querySelectorAll("section").forEach(s=>s.style.display="none");
+document.getElementById(b.dataset.go).style.display="block";
+menu.style.display="none";
+};
+});
+
+const villes=[
+"Conakry","Kindia","Boké","Labé","Mamou","Kankan","Nzérékoré",
+"Dubréka","Coyah","Forécariah","Télimélé","Gaoual","Koundara",
+"Fria","Boffa","Pita","Dalaba","Lélouma","Mali","Tougué",
+"Siguiri","Kouroussa","Mandiana","Dabola","Dinguiraye",
+"Faranah","Kissidougou","Guéckédou","Macenta","Yomou",
+"Lola","Kérouané"
+];
+document.getElementById("ville").innerHTML=villes.map(v=>`<option>${v}</option>`).join("");
+
+let produits=JSON.parse(localStorage.getItem("produits"))||[];
+let panier=[];
+
+const listeProduits=document.getElementById("listeProduits");
+const listePanier=document.getElementById("listePanier");
+const totalSpan=document.getElementById("total");
+
+function afficherProduits(){
+listeProduits.innerHTML="";
+produits.forEach((p,i)=>{
+listeProduits.innerHTML+=`
+<div class="produit">
+<img src="${p.image}">
+<h4>${p.nom}</h4>
+<p>${p.prix} FG</p>
+<button onclick="ajouterPanier(${i})">Ajouter</button>
+</div>`;
+});
+}
+
+window.ajouterPanier=i=>{
+panier.push(produits[i]);
+afficherPanier();
+};
+
+function afficherPanier(){
+listePanier.innerHTML="";
+let total=0;
+
+panier.forEach((p,i)=>{
+total+=Number(p.prix);
+listePanier.innerHTML+=`${p.nom} - ${p.prix} FG 
+<button onclick="panier.splice(${i},1);afficherPanier()">❌</button><br>`;
+});
+
+totalSpan.innerText=total;
+
+let taux=["Conakry","Kindia"].includes(ville.value)?0.08:0.12;
+let frais=total*taux;
+
+document.getElementById("frais").innerText=frais.toFixed(0);
+document.getElementById("grandTotal").innerText=(total+frais).toFixed(0);
+}
+
+/* validation mot de passe vendeur */
+function motDePasseValide(pass){
+return /^(?=.*[A-Za-z])(?=.*[0-9]).{6,}$/.test(pass);
+}
+
+document.getElementById("connectVendeur").onclick=()=>{
+const pass=document.getElementById("vPass").value;
+if(!motDePasseValide(pass)){
+alert("Mot de passe invalide (lettres + chiffres, min 6)");
+return;
+}
+document.getElementById("ajoutProduit").style.display="block";
+};
+
+document.getElementById("ajouterProduit").onclick=()=>{
+const r=new FileReader();
+r.onload=e=>{
+produits.push({nom:pNom.value,prix:pPrix.value,image:e.target.result});
+localStorage.setItem("produits",JSON.stringify(produits));
+afficherProduits();
+};
+r.readAsDataURL(pImage.files[0]);
+};
+
+/* recalcul automatique panier */
+document.getElementById("ville").addEventListener("change", afficherPanier);
+
+afficherProduits();
+document.getElementById("produits").style.display="block";
+
+});
+</script>
+
+</body>
+  </html>

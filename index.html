@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Site E-commerce</title>
+
+<style>
+body {font-family: Arial; padding:20px; background:#ff0000; color:#fff; font-size:18px;}
+h2,h3,h4{font-size:22px}
+
+nav {position:fixed; top:10px; left:10px;}
+#menu-list {display:none; background:#cc0000; padding:10px; font-size:20px;}
+#menu-list li{margin:8px 0;}
+
+section{margin-top:120px; display:none;}
+
+.produit{background:#ff6666; padding:10px; margin:10px; width:200px; display:inline-block; text-align:center}
+.produit img{width:160px;height:160px;object-fit:cover}
+
+button{padding:8px 12px; font-size:16px; background:#800000; color:white; border:none}
+input,select,textarea{width:100%; padding:8px; margin-bottom:10px; font-size:16px}
+</style>
+</head>
+<body>
+
+<nav>
+<button onclick="toggleMenu()">☰ Menu</button>
+<ul id="menu-list">
+<li onclick="showSection('produits-section')">Accueil</li>
+<li onclick="showSection('vendeur-section')">Vendeur</li>
+<li onclick="showSection('client-section')">Client</li>
+<li onclick="showAdmin()">Admin</li>
+<li onclick="showSection('panier-section')">Panier</li>
+<hr>
+<li style="font-size:16px;">📲 Ajouter le site à l’écran d’accueil via le menu du navigateur</li>
+</ul>
+</nav>
+
+<section id="produits-section" style="display:block">
+<h2>Produits</h2>
+<div id="produits-container"></div>
+</section>
+
+<section id="panier-section">
+<h2>Panier</h2>
+<div id="panier-container"></div>
+</section>
+
+<section id="vendeur-section">
+<h3>Inscription / Connexion Vendeur</h3>
+<form id="vendeurForm">
+<input type="text" id="vendeur-username" placeholder="Nom utilisateur" required>
+<input type="password" id="vendeur-password" placeholder="Mot de passe" required>
+<input type="text" id="vendeur-phone" placeholder="Téléphone" required>
+<select id="vendeur-ville" required></select>
+<button type="submit">Valider</button>
+</form>
+
+<div id="ajoutProduit" style="display:none">
+<h3>Ajouter Produit</h3>
+<form id="formProduit">
+<input type="text" id="nomProduit" placeholder="Nom produit" required>
+<textarea id="descProduit" placeholder="Description" required></textarea>
+<input type="number" id="prixProduit" placeholder="Prix" required>
+<input type="file" id="imageProduit" required>
+<button type="submit">Ajouter</button>
+</form>
+</div>
+</section>
+
+<section id="client-section">
+<h2>Commande</h2>
+<form id="commandeForm">
+<input type="text" id="nom" placeholder="Nom client" required>
+<input type="text" id="telephone" placeholder="Téléphone client" required>
+
+<input type="text" id="receveurNom" placeholder="Nom du receveur" required>
+<input type="text" id="receveurTel" placeholder="Téléphone du receveur" required>
+
+<select id="ville" required></select>
+
+<button type="submit">Confirmer</button>
+</form>
+</section>
+
+<section id="admin-section">
+<h2>Commandes</h2>
+<div id="admin-container"></div>
+</section>
+
+<script>
+/* ✅ LISTE DES VILLES AVEC COMMUNES DE CONAKRY */
+const villes = [
+"Boké","Boffa","Fria","Gaoual","Koundara",
+
+"Conakry - Kaloum",
+"Conakry - Dixinn",
+"Conakry - Ratoma",
+"Conakry - Matam",
+"Conakry - Matoto",
+
+"Coyah","Dabola","Dalaba","Dinguiraye","Dubréka","Faranah","Forécariah",
+"Kankan","Kérouané","Kissidougou","Koubia","Kouroussa",
+"Labé","Lélouma","Lola","Macenta","Mali","Mamou","Mandiana",
+"Nzérékoré","Pita","Siguiri","Télimélé","Tougué","Yomou","Kindia",
+"Freetown","Bamako","Dakar"
+];
+
+function remplirVilles(){
+document.getElementById("vendeur-ville").innerHTML = villes.map(v=>`<option>${v}</option>`).join("");
+document.getElementById("ville").innerHTML = villes.map(v=>`<option>${v}</option>`).join("");
+}
+remplirVilles();
+
+function toggleMenu(){
+const m=document.getElementById("menu-list");
+m.style.display=m.style.display==="block"?"none":"block";
+}
+
+function showSection(id){
+document.querySelectorAll("section").forEach(s=>s.style.display="none");
+document.getElementById(id).style.display="block";
+}
+
+let produits = JSON.parse(localStorage.getItem("produits"))||[];
+let panier = JSON.parse(localStorage.getItem("panier"))||[];
+let vendeurs = JSON.parse(localStorage.getItem("vendeurs"))||[];
+let vendeurConnecte=null;
+
+function afficherProduits(){
+const c=document.getElementById("produits-container");
+c.innerHTML="";
+produits.forEach((p,i)=>{
+c.innerHTML+=`<div class="produit"><img src="${p.image}"><h4>${p.nom}</h4><p>${p.prix} FG</p><button onclick="ajouterAuPanier(${i})">Ajouter</button></div>`;
+});
+}
+afficherProduits();
+
+function ajouterAuPanier(i){
+panier.push(produits[i]);
+localStorage.setItem("panier",JSON.stringify(panier));
+afficherPanier();
+}
+
+function afficherPanier(){
+const c=document.getElementById("panier-container");
+c.innerHTML=panier.map(p=>`<p>${p.nom}</p>`).join("");
+}
+afficherPanier();
+
+document.getElementById("vendeurForm").onsubmit=e=>{
+e.preventDefault();
+vendeurConnecte={
+username:vendeur-username.value,
+phone:vendeur-phone.value,
+ville:vendeur-ville.value
+};
+vendeurs.push(vendeurConnecte);
+localStorage.setItem("vendeurs",JSON.stringify(vendeurs));
+document.getElementById("ajoutProduit").style.display="block";
+alert("Vendeur enregistré");
+};
+
+document.getElementById("formProduit").onsubmit=e=>{
+e.preventDefault();
+const reader=new FileReader();
+reader.onload=evt=>{
+produits.push({nom:nomProduit.value,description:descProduit.value,prix:prixProduit.value,image:evt.target.result,vendeur:vendeurConnecte});
+localStorage.setItem("produits",JSON.stringify(produits));
+afficherProduits();
+};
+reader.readAsDataURL(imageProduit.files[0]);
+};
+
+document.getElementById("commandeForm").onsubmit=e=>{
+e.preventDefault();
+const commandes=JSON.parse(localStorage.getItem("commandes"))||[];
+commandes.push({
+client:nom.value,
+tel:telephone.value,
+receveurNom:receveurNom.value,
+receveurTel:receveurTel.value,
+ville:ville.value,
+produits:panier
+});
+localStorage.setItem("commandes",JSON.stringify(commandes));
+panier=[];localStorage.removeItem("panier");afficherPanier();
+alert("Commande enregistrée. Envoyez la capture du paiement WhatsApp +224625216110");
+};
+
+function showAdmin(){
+showSection("admin-section");
+afficherCommandes();
+}
+
+function afficherCommandes(){
+const c=document.getElementById("admin-container");
+const commandes=JSON.parse(localStorage.getItem("commandes"))||[];
+c.innerHTML="";
+commandes.forEach(cmd=>{
+c.innerHTML+=`<div style="background:white;color:black;margin:10px;padding:10px">
+<b>Client:</b> ${cmd.client} (${cmd.tel})<br>
+<b>Receveur:</b> ${cmd.receveurNom} (${cmd.receveurTel})<br>
+<b>Ville:</b> ${cmd.ville}<br>
+<b>Produits:</b><ul>${cmd.produits.map(p=>`<li>${p.nom} - Vendeur: ${p.vendeur.username} (${p.vendeur.phone}, ${p.vendeur.ville})</li>`).join("")}</ul>
+</div>`;
+});
+}
+</script>
+</body>
+  </html>

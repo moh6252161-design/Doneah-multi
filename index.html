@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Mon Marché en Ligne</title>
+<style>
+body{font-family:Arial;margin:0;background:#111;color:#fff}
+header{background:#660000;padding:15px;text-align:center;font-size:22px}
+section{padding:15px}
+.produit{background:#1a1a1a;margin:10px;padding:10px;border-radius:8px;cursor:pointer}
+button{padding:8px 12px;border:none;border-radius:5px;background:#00aa00;color:#fff;margin-top:5px;cursor:pointer}
+input,select{padding:8px;width:95%;margin:5px 0;border-radius:5px;border:none}
+.admin,.vendeur,.client{display:none}
+.box{background:#1a1a1a;padding:15px;border-radius:8px;margin-top:10px}
+</style>
+</head>
+<body>
+
+<header>🛒 Marché Multi-Vendeurs</header>
+
+<section id="produits"></section>
+
+<!-- COMMANDE DIRECTE -->
+<section id="commandeSection" style="display:none">
+<h3>🧾 Commander le produit</h3>
+<div class="box">
+<p id="produitChoisi"></p>
+
+<input type="text" id="clientNom" placeholder="Votre nom" required>
+<input type="tel" id="clientTel" placeholder="Votre numéro" required>
+
+<input type="text" id="receveurNom" placeholder="Nom du receveur" required>
+<input type="tel" id="receveurTel" placeholder="Numéro du receveur" required>
+
+<select id="villeLivraison">
+<option>Conakry</option>
+<option>Kindia</option>
+<option>Kankan</option>
+<option>Labé</option>
+<option>N'Zérékoré</option>
+</select>
+
+<h4>💳 Moyens de paiement</h4>
+<p>🟠 Orange Money : <b>+224625216110</b></p>
+<p>🔵 Mobile Money : <b>+224660452333</b></p>
+
+<p style="color:#ffcc00;font-size:14px">
+Après paiement, envoyez la capture de preuve sur WhatsApp au <b>625216110</b> (hors site)
+</p>
+
+<button onclick="validerCommande()">Valider la commande</button>
+</div>
+</section>
+
+<!-- LOGIN -->
+<section class="box">
+<h3>🔐 Connexion</h3>
+<input type="text" id="loginUser" placeholder="Nom d'utilisateur">
+<input type="password" id="loginPass" placeholder="Mot de passe">
+<select id="loginRole">
+<option value="admin">Admin</option>
+<option value="vendeur">Vendeur</option>
+<option value="client">Client</option>
+</select>
+<button onclick="login()">Connexion</button>
+</section>
+
+<!-- ADMIN PANEL -->
+<section class="admin box">
+<h3>👑 Admin</h3>
+<div id="admin-commandes"></div>
+</section>
+
+<script>
+/* PRODUITS DEMO */
+let produits=[
+{nom:"Samsung A32",prix:700000,vendeur:"Moussa"},
+{nom:"TV Écran 32\"",prix:530000,vendeur:"Fatou"},
+{nom:"Chaussures Nike",prix:250000,vendeur:"Ibrahima"}
+];
+
+let commandes=JSON.parse(localStorage.getItem("commandes"))||[];
+let produitActuel=null;
+
+/* AFFICHAGE PRODUITS */
+const produitsDiv=document.getElementById("produits");
+function afficherProduits(){
+produitsDiv.innerHTML="<h3>🛍 Produits</h3>";
+produits.forEach((p,i)=>{
+produitsDiv.innerHTML+=`
+<div class="produit" onclick="commanderDirect(${i})">
+<h4>${p.nom}</h4>
+<p>Prix: ${p.prix} FG</p>
+<p>Vendeur: ${p.vendeur}</p>
+</div>`;
+});
+}
+afficherProduits();
+
+/* COMMANDE DIRECTE */
+function commanderDirect(index){
+produitActuel=produits[index];
+document.getElementById("commandeSection").style.display="block";
+document.getElementById("produitChoisi").innerHTML=
+`Produit: <b>${produitActuel.nom}</b> - ${produitActuel.prix} FG (Vendeur: ${produitActuel.vendeur})`;
+window.scrollTo(0,document.body.scrollHeight);
+}
+
+/* VALIDER COMMANDE */
+function validerCommande(){
+const commande={
+clientNom:clientNom.value,
+clientTel:clientTel.value,
+receveurNom:receveurNom.value,
+receveurTel:receveurTel.value,
+ville:villeLivraison.value,
+produit:produitActuel
+};
+
+commandes.push(commande);
+localStorage.setItem("commandes",JSON.stringify(commandes));
+
+let message=`Nouvelle commande:%0AClient: ${commande.clientNom}%0ATel: ${commande.clientTel}%0AProduit: ${commande.produit.nom} (${commande.produit.prix} FG)`;
+window.open(`https://wa.me/224625216110?text=${message}`,"_blank");
+
+alert("Commande envoyée !");
+document.getElementById("commandeSection").style.display="none";
+}
+
+/* LOGIN SYSTEM */
+function login(){
+let u=loginUser.value;
+let p=loginPass.value;
+let r=loginRole.value;
+
+if(r==="admin"){
+if(u==="papasta" && p==="papasta3494"){
+document.querySelector(".admin").style.display="block";
+afficherCommandes();
+alert("Admin connecté");
+}else{
+alert("Accès refusé");
+}
+}
+else{
+if(u.length<3||p.length<3){
+alert("Nom et mot de passe obligatoires");
+return;
+}
+alert(r+" connecté");
+}
+}
+
+/* ADMIN VOIR COMMANDES */
+function afficherCommandes(){
+const c=document.getElementById("admin-commandes");
+c.innerHTML="<h4>📦 Commandes reçues</h4>";
+commandes.forEach((cmd,i)=>{
+c.innerHTML+=`
+<div style="background:#222;padding:10px;margin:5px 0">
+<b>Commande #${i+1}</b><br>
+Client: ${cmd.clientNom} (${cmd.clientTel})<br>
+Receveur: ${cmd.receveurNom} (${cmd.receveurTel})<br>
+Ville: ${cmd.ville}<br>
+Produit: ${cmd.produit.nom} - ${cmd.produit.prix} FG<br>
+Vendeur: ${cmd.produit.vendeur}
+</div>`;
+});
+}
+</script>
+
+</body>
+  </html>

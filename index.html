@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Site E-commerce Complet</title>
+<style>
+body { font-family: Arial, sans-serif; padding: 20px; background-color: #ff0000; color: #fff; }
+nav { position: fixed; top: 10px; left: 10px; z-index: 1000; }
+#menu-list { list-style: none; padding: 0; margin: 0; background: #cc0000; border: 1px solid #800000; display: none; }
+#menu-list li a { display: block; padding: 5px 10px; text-decoration: none; color: #fff; cursor: pointer; }
+section { margin-top: 80px; display: none; }
+.produit { border: 1px solid #800000; padding: 10px; margin: 10px; display: inline-block; width: 180px; text-align: center; background-color: #ff6666; }
+.produit img { width: 150px; height: 150px; object-fit: cover; }
+button.toggle-btn { margin: 5px 0; background-color: #800000; color: white; border: none; padding: 5px 10px; cursor: pointer; }
+button:disabled { background-color: #555; cursor: not-allowed; }
+input, select, textarea { width: 100%; padding:5px; margin-bottom:10px; }
+</style>
+</head>
+<body>
+
+<nav>
+  <button id="menu-btn">Menu ☰</button>
+  <ul id="menu-list">
+    <li><a onclick="showSection('produits-section')">Accueil</a></li>
+    <li><a onclick="toggleSection('vendeur-section')">Vendeur</a></li>
+    <li><a onclick="toggleSection('client-section')">Client</a></li>
+    <li><a onclick="showAdmin()">Admin</a></li>
+    <li><a onclick="toggleSection('guide-section')">Guide IA</a></li>
+    <li><a onclick="scrollTo('panier-container')">Panier</a></li>
+  </ul>
+</nav>
+
+<!-- PRODUITS -->
+<section id="produits-section" style="display:block">
+  <h2>Produits disponibles</h2>
+  <div id="produits-container"></div>
+</section>
+
+<!-- PANIER -->
+<section id="panier-section">
+  <h2>Panier</h2>
+  <div id="panier-container"></div>
+</section>
+
+<!-- CLIENT -->
+<section id="client-section">
+  <button class="toggle-btn" onclick="toggleSection('commandeForm')">Passer une commande</button>
+  <form id="commandeForm" style="display:none">
+    <input type="text" id="nom" placeholder="Nom complet" required><br>
+    <input type="text" id="telephone" placeholder="Téléphone" required><br>
+    <input type="text" id="ville" placeholder="Ville / Préfecture" required><br>
+    <label for="payment">Moyen de paiement :</label>
+    <select id="payment" required>
+      <option value="orange">Orange Money - +224 625 216 110</option>
+      <option value="mtn">MTN Mobile Money - +224 660 452 333</option>
+      <option value="paycard">Paycard - 490 245 747</option>
+    </select><br>
+    <button type="submit">Passer la commande</button>
+  </form>
+</section>
+
+<!-- VENDEUR -->
+<section id="vendeur-section">
+  <h3>Inscription / Connexion Vendeur</h3>
+  <form id="vendeurForm">
+    <input type="text" id="vendeur-username" placeholder="Nom d'utilisateur" required><br>
+    <input type="password" id="vendeur-password" placeholder="Mot de passe" required><br>
+    <button type="submit">Se connecter / s'inscrire</button>
+  </form>
+  <button id="changePasswordBtn" style="display:none;">Changer mot de passe</button>
+
+  <div id="ajoutProduit" style="display:none">
+    <h3>Ajouter un produit</h3>
+    <form id="formProduit">
+      <input type="text" id="nomProduit" placeholder="Nom produit" required><br>
+      <textarea id="descProduit" placeholder="Description" required></textarea><br>
+      <input type="number" id="prixProduit" placeholder="Prix" required><br>
+      <input type="file" id="imageProduit" accept="image/*"><br>
+      <button type="submit">Ajouter Produit</button>
+    </form>
+  </div>
+</section>
+
+<!-- ADMIN -->
+<section id="admin-section">
+  <h2>Admin - Commandes</h2>
+  <div id="admin-container"></div>
+</section>
+
+<!-- GUIDE -->
+<section id="guide-section">
+  <button class="toggle-btn" onclick="toggleSection('guide-content')">Guide IA</button>
+  <div id="guide-content" style="display:none">
+    <ul>
+      <li>Ajouter le site sur le téléphone : Menu navigateur → “Ajouter à l’écran d’accueil”</li>
+      <li>Pour commander, ajoutez un produit au panier, puis remplissez le formulaire client</li>
+      <li>Pour les moyens de paiement, utilisez les numéros indiqués</li>
+    </ul>
+  </div>
+</section>
+
+<script>
+// ===== MENU =====
+document.getElementById("menu-btn").addEventListener("click", ()=>{
+  const menu = document.getElementById("menu-list");
+  menu.style.display = menu.style.display==='none'?'block':'none';
+});
+function toggleSection(id){ 
+  const sec=document.getElementById(id); 
+  sec.style.display=sec.style.display==='none'?'block':'none'; 
+}
+function showSection(id){ 
+  ['produits-section','client-section','vendeur-section','guide-section','admin-section'].forEach(s=>document.getElementById(s).style.display='none'); 
+  document.getElementById(id).style.display='block'; 
+}
+function scrollTo(id){ 
+  document.getElementById(id).scrollIntoView({behavior:'smooth'}); 
+}
+
+// ===== PRODUITS =====
+let produits = JSON.parse(localStorage.getItem("produits")) || [
+  {nom:"Vélo", description:"Vélo de qualité", prix:120000, image:"https://via.placeholder.com/150?text=V%C3%A9lo", vendeur:"Admin"},
+  {nom:"Télévision", description:"Écran 32 pouces", prix:580000, image:"https://via.placeholder.com/150?text=T%C3%A9l%C3%A9vision", vendeur:"Admin"},
+  {nom:"Bazin", description:"Tissu bazin élégant", prix:200000, image:"https://via.placeholder.com/150?text=Bazin", vendeur:"Admin"}
+];
+
+function afficherProduits(prods){
+  const container=document.getElementById("produits-container");
+  container.innerHTML="";
+  prods.forEach((p,i)=>{
+    const div=document.createElement("div");
+    div.classList.add("produit");
+    div.innerHTML = `
+      <img src="${p.image}" alt="${p.nom}">
+      <h3>${p.nom}</h3>
+      <p>${p.description}</p>
+      <p>Prix: ${p.prix} FG</p>
+      <button onclick='ajouterAuPanier(${i})'>Ajouter au panier</button>
+    `;
+    container.appendChild(div);
+  });
+}
+afficherProduits(produits);
+
+// ===== PANIER =====
+let panier = JSON.parse(localStorage.getItem("panier")) || [];
+function ajouterAuPanier(index){ 
+  const p = produits[index];
+  panier.push({...p, quantite:1}); 
+  localStorage.setItem("panier", JSON.stringify(panier)); 
+  afficherPanier(); 
+}
+function afficherPanier(){
+  const container=document.getElementById("panier-container");
+  container.innerHTML="";
+  panier.forEach(item=>{
+    container.innerHTML += `<p>${item.nom} - ${item.prix} FG x ${item.quantite}</p>`;
+  });
+}
+afficherPanier();
+
+// ===== VENDEUR =====
+let vendeurs = JSON.parse(localStorage.getItem("vendeurs")) || [];
+let vendeurConnecte = JSON.parse(localStorage.getItem("vendeurConnecte")) || null;
+const vendeurForm = document.getElementById("vendeurForm");
+const changePasswordBtn = document.getElementById("changePasswordBtn");
+
+function connexionVendeur(username,password){
+  let vendeur = vendeurs.find(v=>v.username===username);
+  if(vendeur){
+    if(vendeur.password === password){
+      vendeurConnecte = vendeur;
+      alert("Connecté !");
+    } else { alert("Mot de passe incorrect"); return; }
+  } else {
+    let nouveau={username,password};
+    vendeurs.push(nouveau);
+    vendeurConnecte = nouveau;
+    alert("Inscription réussie !");
+  }
+  localStorage.setItem("vendeurs", JSON.stringify(vendeurs));
+  localStorage.setItem("vendeurConnecte", JSON.stringify(vendeurConnecte));
+  document.getElementById("ajoutProduit").style.display="block";
+  changePasswordBtn.style.display="inline-block";
+}
+
+vendeurForm.addEventListener("submit", e=>{
+  e.preventDefault();
+  const username=document.getElementById("vendeur-username").value.trim();
+  const password=document.getElementById("vendeur-password").value.trim();
+  if(username && password) connexionVendeur(username,password);
+});
+
+changePasswordBtn.addEventListener("click", ()=>{
+  const mdp = prompt("Entrez le nouveau mot de passe :");
+  if(mdp){
+    vendeurConnecte.password = mdp;
+    let index = vendeurs.findIndex(v=>v.username===vendeurConnecte.username);
+    vendeurs[index] = vendeurConnecte;
+    localStorage.setItem("vendeurs", JSON.stringify(vendeurs));
+    localStorage.setItem("vendeurConnecte", JSON.stringify(vendeurConnecte));
+    alert("Mot de passe changé !");
+  }
+});
+
+// ===== AJOUT PRODUIT =====
+document.getElementById("formProduit").addEventListener("submit", e=>{
+  e.preventDefault();
+  if(!vendeurConnecte){ alert("Veuillez vous connecter en tant que vendeur"); return; }
+
+  const nom = document.getElementById("nomProduit").value;
+  const desc = document.getElementById("descProduit").value;
+  const prix = parseFloat(document.getElementById("prixProduit").value);
+  const file = document.getElementById("imageProduit").files[0];
+
+  if(file){
+    const reader = new FileReader();
+    reader.onload = function(evt){
+      const imageBase64 = evt.target.result;
+      const nouveau = {nom, description: desc, prix, image: imageBase64, vendeur: vendeurConnecte.username};
+      produits.push(nouveau);
+      localStorage.setItem("produits", JSON.stringify(produits));
+      afficherProduits(produits);
+      alert("Produit ajouté !");
+      document.getElementById("formProduit").reset();
+    };
+    reader.readAsDataURL(file);
+  } else {
+    const nouveau = {nom, description: desc, prix, image: "https://via.placeholder.com/150", vendeur: vendeurConnecte.username};
+    produits.push(nouveau);
+    localStorage.setItem("produits", JSON.stringify(produits));
+    afficherProduits(produits);
+    alert("Produit ajouté !");
+    document.getElementById("formProduit").reset();
+  }
+});
+
+// ===== CLIENT =====
+document.getElementById("commandeForm").addEventListener("submit", e=>{
+  e.preventDefault();
+  const nom = document.getElementById("nom").value.trim();
+  const tel = document.getElementById("telephone").value.trim();
+  const ville = document.getElementById("ville").value.trim();
+  if(panier.length === 0){ alert("Panier vide !"); return; }
+
+  const produitsCommande = panier.map(p => ({nom: p.nom, prix: p.prix, quantite: p.quantite, vendeur: p.vendeur}));
+
+  let commandes = JSON.parse(localStorage.getItem("commandes")) || [];
+  commandes.push({
+    nomClient: nom,
+    telClient: tel,
+    villeClient: ville,
+    produits: produitsCommande
+  });
+  localStorage.setItem("commandes", JSON.stringify(commandes));
+
+  alert("Commande passée !");
+  panier = [];
+  localStorage.setItem("panier", JSON.stringify(panier));
+  afficherPanier();
+  document.getElementById("commandeForm").reset();
+});
+
+// ===== ADMIN =====
+const admin = {username:"papasta", password:"papasta3494"};
+function showAdmin(){
+  const user = prompt("Nom d'utilisateur admin :");
+  const pwd = prompt("Mot de passe admin :");
+  if(user===admin.username && pwd===admin.password){
+    document.getElementById("admin-section").style.display="block";
+    afficherCommandes();
+  } else alert("Identifiants incorrects");
+}
+
+function afficherCommandes(){
+  const container = document.getElementById("admin-container");
+  container.innerHTML = "";
+  const commandes = JSON.parse(localStorage.getItem("commandes")) || [];
+  commandes.forEach((c,i)=>{
+    container.innerHTML += `<h4>Commande #${i+1}</h4>
+      <p>Nom: ${c.nomClient}</p>
+      <p>Téléphone: ${c.telClient}</p>
+      <p>Ville: ${c.villeClient}</p>
+      <p>Produits :</p>
+      <ul>
+        ${c.produits.map(p=>`<li>${p.nom} x ${p.quantite} (Vendeur: ${p.vendeur})</li>`).join('')}
+      </ul><hr>`;
+  });
+}
+</script>
+
+</body>
+               </html>

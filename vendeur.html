@@ -1,75 +1,51 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Espace Vendeur</title>
-  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js"></script>
-  <style>
-    body { font-family: Arial; background:#f4f4f4; padding:20px; }
-    .box { background:white; padding:20px; border-radius:10px; max-width:500px; margin:auto; }
-    input, textarea, select { width:100%; padding:10px; margin-top:10px; }
-    button { margin-top:15px; padding:12px; background:#28a745; color:white; border:none; width:100%; font-size:16px; cursor:pointer; }
-    img { width:100%; margin-top:10px; border-radius:8px; }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Espace Vendeur</title>
+
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js"></script>
+
+<style>
+body { font-family: Arial; background:#f4f4f4; padding:20px; }
+.box { background:white; padding:20px; border-radius:10px; max-width:500px; margin:auto; }
+input, textarea, select { width:100%; padding:10px; margin-top:10px; }
+button { margin-top:15px; padding:12px; background:#28a745; color:white; border:none; width:100%; font-size:16px; }
+img { width:100%; margin-top:10px; border-radius:8px; }
+</style>
 </head>
+
 <body>
-
 <div class="box">
-  <h2>Ajouter un produit</h2>
+<h2>Ajouter un produit</h2>
 
-  <input type="text" id="vendeurNom" placeholder="Nom du vendeur">
-  <input type="text" id="nomProduit" placeholder="Nom du produit">
-  <input type="number" id="prixProduit" placeholder="Prix (GNF)">
-  <textarea id="descriptionProduit" placeholder="Description du produit"></textarea>
+<input type="text" id="vendeurNom" placeholder="Nom du vendeur">
+<input type="text" id="nomProduit" placeholder="Nom du produit">
+<input type="number" id="prixProduit" placeholder="Prix (GNF)">
+<textarea id="descriptionProduit" placeholder="Description du produit"></textarea>
 
-  <select id="villeProduit">
-    <option value="">Sélectionne une ville</option>
-    <option value="Conakry">Conakry</option>
-    <option value="Kindia">Kindia</option>
-    <option value="Labé">Labé</option>
-    <option value="Kankan">Kankan</option>
-    <option value="Nzérékoré">Nzérékoré</option>
-    <option value="Boké">Boké</option>
-    <option value="Fria">Fria</option>
-    <option value="Coyah">Coyah</option>
-    <option value="Dubréka">Dubréka</option>
-    <option value="Forécariah">Forécariah</option>
-    <option value="Mamou">Mamou</option>
-    <option value="Beyla">Beyla</option>
-    <option value="Guéckédou">Guéckédou</option>
-    <option value="Macenta">Macenta</option>
-    <option value="Siguiri">Siguiri</option>
-    <option value="Kouroussa">Kouroussa</option>
-    <option value="Kérouané">Kérouané</option>
-    <option value="Dinguiraye">Dinguiraye</option>
-    <option value="Faranah">Faranah</option>
-    <option value="Boffa">Boffa</option>
-    <option value="Télimélé">Télimélé</option>
-    <option value="Pita">Pita</option>
-    <option value="Dalaba">Dalaba</option>
-    <option value="Lélouma">Lélouma</option>
-    <option value="Tougué">Tougué</option>
-    <option value="Koundara">Koundara</option>
-    <option value="Gaoual">Gaoual</option>
-    <option value="Banankoro">Banankoro</option>
-    <option value="Kissidougou">Kissidougou</option>
-    <option value="Koundara">Koundara</option>
-    <option value="Dubreka">Dubreka</option>
-    <option value="Boké">Boké</option>
-  </select>
+<select id="villeProduit">
+<option value="">Choisir une ville</option>
+<option value="Conakry">Conakry</option>
+<option value="Kindia">Kindia</option>
+<option value="Labé">Labé</option>
+<option value="Nzérékoré">Nzérékoré</option>
+<!-- Ajoute ici toutes les 33 préfectures -->
+</select>
 
-  <select id="modePaiement">
-    <option value="">Mode de paiement</option>
-    <option value="Orange Money">Orange Money</option>
-    <option value="Mobile Money">Mobile Money</option>
-  </select>
+<select id="modeTransaction">
+<option value="">Choisir un mode de paiement</option>
+<option value="Orange Money">Orange Money</option>
+<option value="Mobile Money">Mobile Money</option>
+</select>
 
-  <input type="file" id="imageProduit" accept="image/*">
+<input type="file" id="imageProduit" accept="image/*">
 
-  <button onclick="ajouterProduit()">Publier le produit</button>
-  <p id="message"></p>
+<button onclick="ajouterProduit()">Publier le produit</button>
+<p id="message"></p>
 </div>
 
 <script src="vendeur.js"></script>

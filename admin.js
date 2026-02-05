@@ -4,9 +4,12 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Admin - Gestion Produits</title>
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js"></script>
-<style>
+apiKey: "TA_CLE_API",
+authDomain: "TON_PROJET.firebaseapp.com",
+projectId: "TON_PROJET",
+storageBucket: "TON_PROJET.appspot.com",
+messagingSenderId: "XXXX",
+appId: "XXXX"
   body { font-family: Arial; padding:20px; background:#f4f4f4; }
   table { width:100%; border-collapse: collapse; margin-top:20px; }
   th, td { border:1px solid #ddd; padding:10px; text-align:center; }

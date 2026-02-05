@@ -1,71 +1,27 @@
 <!DOCTYPE html>
-<html>
+<html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <title>Admin - Gestion</title>
-  <style>
-    body{font-family:Arial; padding:20px; background:#f2f2f2;}
-    h1{color:#333;}
-    table{width:100%; border-collapse:collapse; margin-bottom:30px;}
-    th,td{border:1px solid #ccc; padding:8px; text-align:left;}
-    th{background:#ddd;}
-    img{width:60px;}
-    button{padding:5px 10px; cursor:pointer;}
-  </style>
+<meta charset="UTF-8">
+<title>Admin - Commandes</title>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+<style>
+body { font-family: Arial; padding:20px; }
+table { width:100%; border-collapse: collapse; }
+th, td { border:1px solid #ddd; padding:8px; text-align:left; }
+th { background:#28a745; color:white; }
+</style>
 </head>
 <body>
-
-<script>
-const password = prompt("Mot de passe admin ?");
-if(password !== "admin123"){
-  document.body.innerHTML = "<h2>Accès refusé</h2>";
-}
-</script>
-
-<h1>📦 Produits publiés</h1>
-<table id="productsTable">
-<tr><th>Image</th><th>Nom</th><th>Prix</th><th>Vendeur</th><th>Action</th></tr>
+<h1>Liste des commandes</h1>
+<table>
+  <thead>
+    <tr>
+      <th>Client</th><th>Téléphone</th><th>Ville</th><th>Produit</th><th>Prix</th><th>Vendeur</th><th>Mode Paiement</th><th>Date</th>
+    </tr>
+  </thead>
+  <tbody id="commandesContainer"></tbody>
 </table>
-
-<h1>🛒 Commandes reçues</h1>
-<table id="ordersTable">
-<tr><th>Client</th><th>Téléphone</th><th>Ville</th><th>Produit</th><th>Vendeur</th></tr>
-</table>
-
-<script>
-const products = JSON.parse(localStorage.getItem("products")) || [];
-const orders = JSON.parse(localStorage.getItem("orders")) || [];
-
-const productsTable = document.getElementById("productsTable");
-products.forEach((p,i)=>{
-  productsTable.innerHTML += `
-  <tr>
-    <td><img src="${p.image}"></td>
-    <td>${p.name}</td>
-    <td>${p.price} GNF</td>
-    <td>${p.vendeurNom}</td>
-    <td><button onclick="deleteProduct(${i})">Supprimer</button></td>
-  </tr>`;
-});
-
-function deleteProduct(index){
-  products.splice(index,1);
-  localStorage.setItem("products", JSON.stringify(products));
-  location.reload();
-}
-
-const ordersTable = document.getElementById("ordersTable");
-orders.forEach(o=>{
-  ordersTable.innerHTML += `
-  <tr>
-    <td>${o.client}</td>
-    <td>${o.phone}</td>
-    <td>${o.city}</td>
-    <td>${o.product}</td>
-    <td>${o.vendeur}</td>
-  </tr>`;
-});
-</script>
-
+<script src="admin.js"></script>
 </body>
 </html>

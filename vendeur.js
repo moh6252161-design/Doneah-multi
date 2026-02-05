@@ -1,22 +1,21 @@
-// 🔥 CONFIG FIREBASE (REMPLACE PAR TES INFOS)
+// 🔥 CONFIG FIREBASE
 var firebaseConfig = {
   apiKey: "TA_CLE_API",
   authDomain: "TON_PROJET.firebaseapp.com",
   projectId: "TON_PROJET",
 };
-
 firebase.initializeApp(firebaseConfig);
 var db = firebase.firestore();
 
-// ☁️ CONFIG CLOUDINARY (REMPLACE AUSSI)
+// ☁️ CONFIG CLOUDINARY
 var cloudName = "TON_CLOUD_NAME";
 var uploadPreset = "TON_UPLOAD_PRESET";
 
 function ajouterProduit() {
-  var vendeur = document.getElementById("vendeurNom").value;
-  var nom = document.getElementById("nomProduit").value;
-  var prix = document.getElementById("prixProduit").value;
-  var description = document.getElementById("descriptionProduit").value;
+  var vendeur = document.getElementById("vendeurNom").value.trim();
+  var nom = document.getElementById("nomProduit").value.trim();
+  var prix = document.getElementById("prixProduit").value.trim();
+  var description = document.getElementById("descriptionProduit").value.trim();
   var imageFile = document.getElementById("imageProduit").files[0];
 
   if (!vendeur || !nom || !prix || !description || !imageFile) {
@@ -37,7 +36,6 @@ function ajouterProduit() {
   .then(res => res.json())
   .then(data => {
     var imageUrl = data.secure_url;
-
     return db.collection("produits").add({
       vendeur: vendeur,
       nom: nom,
@@ -50,7 +48,5 @@ function ajouterProduit() {
   .then(() => {
     document.getElementById("message").innerText = "Produit publié avec succès ✅";
   })
-  .catch(error => {
-    alert("Erreur: " + error);
-  });
+  .catch(error => alert("Erreur: " + error));
 }

@@ -1,137 +1,119 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html>
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Marché Express Guinée</title>
-
-<style>
-body{margin:0;font-family:Arial;background:#f4f6f9;}
-header{background:#0a7cff;color:white;padding:20px;text-align:center;}
-.search-bar{padding:15px;text-align:center;background:white;}
-.search-bar input{width:90%;padding:12px;border-radius:25px;border:1px solid #ccc;}
-.products{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:15px;padding:20px;}
-.product{background:white;border-radius:12px;padding:12px;text-align:center;box-shadow:0 4px 10px rgba(0,0,0,0.08);}
-.product img{width:100%;height:160px;object-fit:cover;border-radius:10px;}
-.price{color:#0a7cff;font-weight:bold;margin:8px 0;}
-button{background:#0a7cff;color:white;border:none;padding:10px 15px;border-radius:20px;cursor:pointer;font-weight:bold;margin:5px;}
-footer{text-align:center;padding:20px;font-size:14px;color:#555;}
-.ai-box{position:fixed;bottom:20px;right:20px;width:260px;background:white;border-radius:12px;box-shadow:0 5px 15px rgba(0,0,0,0.2);}
-.ai-header{background:#0a7cff;color:white;padding:10px;border-radius:12px 12px 0 0;font-weight:bold;}
-.ai-body{padding:10px;font-size:13px;}
-</style>
+  <meta charset="UTF-8">
+  <title>Ma Boutique</title>
+  <style>
+    body { font-family: Arial; background:#f2f2f2; padding:20px; }
+    .product { background:white; padding:15px; margin:15px 0; border-radius:8px; }
+    img { width:150px; border-radius:8px; }
+    input, button { padding:8px; margin:5px 0; }
+  </style>
 </head>
 <body>
 
-<header>
-<h1>🛒 Marché Express Guinée</h1>
-Livraison depuis Conakry vers toutes les préfectures de Guinée + Freetown • Bamako • Dakar
-</header>
+<h1>🛍 Nos Produits</h1>
 
-<div style="text-align:center;margin:15px;">
-<button onclick="inscriptionVendeur()">🛍️ Devenir Vendeur</button>
-<button onclick="ajouterProduit()">➕ Ajouter un produit</button>
-</div>
+<input type="text" id="search" placeholder="🔍 Rechercher un produit..." onkeyup="searchProducts()">
 
-<div class="search-bar">
-<input type="text" placeholder="🔍 Rechercher un produit...">
-</div>
+<div id="products"></div>
 
-<section class="products">
-<div class="product">
-<img src="https://i.imgur.com/2DhmtJ4.jpg">
-<h3>Bazin Riche</h3>
-<p class="price">350 000 GNF</p>
-<button onclick="commander('Bazin Riche',350000)">Commander</button>
-</div>
+<hr>
 
-<div class="product">
-<img src="https://i.imgur.com/QkIa5tT.jpg">
-<h3>Chaussures Mode</h3>
-<p class="price">280 000 GNF</p>
-<button onclick="commander('Chaussures Mode',280000)">Commander</button>
-</div>
+<h2>🛒 Passer une commande</h2>
+<form id="orderForm">
+  <input type="text" id="clientName" placeholder="Votre nom" required><br>
+  <input type="tel" id="phone" placeholder="Téléphone" required><br>
+  <input type="text" id="city" placeholder="Ville" required><br>
 
-<div class="product">
-<img src="https://i.imgur.com/8Km9tLL.jpg">
-<h3>Lunettes Stylées</h3>
-<p class="price">120 000 GNF</p>
-<button onclick="commander('Lunettes Stylées',120000)">Commander</button>
-</div>
-</section>
+  <input type="hidden" id="productName">
+  <input type="hidden" id="price">
+  <input type="hidden" id="sellerName">
 
-<footer>
-📦 Les colis quittent Conakry et sont déposés à la gare routière choisie.
-</footer>
+  <button type="submit">Commander</button>
+</form>
 
-<div class="ai-box">
-<div class="ai-header">🤖 Assistant Commande</div>
-<div class="ai-body">
-<button onclick="aideCommande()">🛍️ Passer une commande</button>
-<button onclick="alert('Livraison depuis Conakry vers toutes les préfectures')">🚚 Infos livraison</button>
-</div>
-</div>
+<h3>💳 Paiement après commande :</h3>
+<p>Orange Money : +224 625 21 61 10</p>
+<p>Mobile Money : +224 660 45 23 33</p>
 
 <script>
-const villes = [
-"Conakry","Kindia","Mamou","Labé","Kankan","Faranah","Boké","Nzérékoré","Siguiri","Kissidougou",
-"Guéckédou","Macenta","Kérouané","Kouroussa","Mandiana","Dabola","Dalaba","Pita","Mali","Tougué",
-"Lélouma","Gaoual","Koundara","Boffa","Fria","Coyah","Forécariah","Télimélé","Dinguiraye","Yomou",
-"Beyla","Lola","Freetown","Bamako","Dakar"
+const products = [
+  {
+    name: "Chaussures Nike",
+    price: "450000",
+    seller: "Boutique Alpha",
+    image: "https://via.placeholder.com/150"
+  },
+  {
+    name: "Sac à main Dame",
+    price: "300000",
+    seller: "Fashion Store",
+    image: "https://via.placeholder.com/150"
+  },
+  {
+    name: "Téléphone Samsung",
+    price: "1200000",
+    seller: "Tech Guinée",
+    image: "https://via.placeholder.com/150"
+  }
 ];
 
-function aideCommande(){
-commander("Produit à préciser",0);
+const container = document.getElementById("products");
+
+function displayProducts(list) {
+  container.innerHTML = "";
+  list.forEach(p => {
+    container.innerHTML += `
+      <div class="product">
+        <img src="${p.image}"><br>
+        <strong>${p.name}</strong><br>
+        💰 ${p.price} GNF<br>
+        🏪 ${p.seller}<br>
+        <button onclick="selectProduct('${p.name}', '${p.price}', '${p.seller}')">Commander</button>
+      </div>
+    `;
+  });
 }
 
-function commander(produit, prix){
-let nom = prompt("Votre nom :");
-let numero = prompt("Votre numéro WhatsApp :");
-let ville = prompt("Ville de réception :\n" + villes.join(", "));
-let receveur = prompt("Nom du receveur :");
-let numReceveur = prompt("Numéro du receveur :");
+displayProducts(products);
 
-let message = `Nouvelle commande :
-Produit: ${produit}
-Prix: ${prix} GNF
-Client: ${nom}
-Numéro client: ${numero}
-Ville: ${ville}
-Receveur: ${receveur}
-Numéro receveur: ${numReceveur}`;
-
-window.open(`https://wa.me/224625216110?text=${encodeURIComponent(message)}`,"_blank");
+function searchProducts() {
+  const term = document.getElementById("search").value.toLowerCase();
+  const filtered = products.filter(p => p.name.toLowerCase().includes(term));
+  displayProducts(filtered);
 }
 
-function inscriptionVendeur(){
-let nom = prompt("Nom du vendeur / Boutique :");
-let numero = prompt("Numéro WhatsApp du vendeur :");
-let ville = prompt("Ville du vendeur :");
-let produits = prompt("Quels types de produits vendez-vous ?");
-
-let message = `NOUVELLE INSCRIPTION VENDEUR :
-Nom boutique: ${nom}
-Numéro: ${numero}
-Ville: ${ville}
-Produits: ${produits}`;
-
-window.open(`https://wa.me/224625216110?text=${encodeURIComponent(message)}`,"_blank");
+function selectProduct(name, price, seller) {
+  document.getElementById("productName").value = name;
+  document.getElementById("price").value = price;
+  document.getElementById("sellerName").value = seller;
+  window.scrollTo(0, document.body.scrollHeight);
 }
+</script>
 
-function ajouterProduit(){
-let nomVendeur = prompt("Nom de votre boutique :");
-let nomProduit = prompt("Nom du produit :");
-let prix = prompt("Prix du produit en GNF :");
-let description = prompt("Petite description du produit :");
+<script type="module">
+import { db } from './firebase.js';
+import { collection, addDoc, Timestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-let message = `NOUVEAU PRODUIT VENDEUR :
-Boutique: ${nomVendeur}
-Produit: ${nomProduit}
-Prix: ${prix} GNF
-Description: ${description}`;
+document.getElementById("orderForm").addEventListener("submit", async function(e) {
+    e.preventDefault();
 
-window.open(`https://wa.me/224625216110?text=${encodeURIComponent(message)}`,"_blank");
-}
+    const order = {
+        clientName: document.getElementById("clientName").value,
+        phone: document.getElementById("phone").value,
+        city: document.getElementById("city").value,
+        productName: document.getElementById("productName").value,
+        price: document.getElementById("price").value,
+        sellerName: document.getElementById("sellerName").value,
+        date: Timestamp.now(),
+        status: "En attente"
+    };
+
+    await addDoc(collection(db, "orders"), order);
+
+    alert("Commande envoyée avec succès !");
+});
 </script>
 
 </body>

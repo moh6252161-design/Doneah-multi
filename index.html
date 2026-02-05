@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Site E-commerce</title>
+
+<style>
+body {font-family: Arial; padding:20px; background:#ff0000; color:#fff; font-size:18px;}
+h2,h3,h4{font-size:22px}
+
+nav {position:fixed;top:20px;left:20px;z-index:1000;}
+nav button {font-size:22px;padding:12px 18px;}
+
+#menu-list {display:none;background:#cc0000;padding:20px;font-size:22px;border-radius:8px;width:220px;}
+#menu-list li{margin:15px 0;cursor:pointer;list-style:none;}
+
+section{margin-top:160px; display:none;}
+
+.produit{background:#ff6666;padding:10px;margin:10px;width:200px;display:inline-block;text-align:center}
+.produit img{width:160px;height:160px;object-fit:cover}
+
+button{padding:8px 12px;font-size:16px;background:#800000;color:white;border:none}
+input,select,textarea{width:100%;padding:8px;margin-bottom:10px;font-size:16px}
+</style>
+</head>
+<body>
+
+<nav>
+<button onclick="toggleMenu()">☰ Menu</button>
+<ul id="menu-list">
+<li onclick="showSection('produits-section')">Accueil</li>
+<li onclick="showSection('client-section')">Client</li>
+<li onclick="showSection('vendeur-section')">Vendeur</li>
+<li onclick="showSection('panier-section')">Panier</li>
+<li onclick="showAdminLogin()">Admin</li>
+</ul>
+</nav>
+
+<section id="produits-section" style="display:block">
+<h2>Produits</h2>
+<div id="produits-container"></div>
+</section>
+
+<!-- CLIENT -->
+<section id="client-section">
+<h3>Inscription Client</h3>
+<form id="clientForm">
+<input type="text" id="clientUser" placeholder="Nom utilisateur" required>
+<input type="password" id="clientPass" placeholder="Mot de passe" required>
+<button type="submit">S'inscrire / Se connecter</button>
+</form>
+</section>
+
+<!-- PANIER -->
+<section id="panier-section">
+<h2>Panier</h2>
+<div id="panier-container"></div>
+
+<h3>Informations Client</h3>
+<form id="commandeFormPanier">
+<input type="text" id="clientNom" placeholder="Votre nom" required>
+<input type="text" id="clientTel" placeholder="Votre numéro" required>
+
+<h3>Informations Receveur</h3>
+<input type="text" id="receveurNom" placeholder="Nom du receveur" required>
+<input type="text" id="receveurTel" placeholder="Téléphone du receveur" required>
+
+<select id="villeLivraison" required></select>
+<button type="submit">Valider la commande</button>
+</form>
+</section>
+
+<!-- ADMIN -->
+<section id="admin-section">
+<h2>Commandes reçues (Admin)</h2>
+<div id="admin-commandes"></div>
+</section>
+
+<!-- VENDEUR -->
+<section id="vendeur-section">
+<h3>Inscription / Connexion Vendeur</h3>
+<form id="vendeurForm">
+<input type="text" id="vendeur-username" placeholder="Nom utilisateur" required>
+<input type="password" id="vendeur-password" placeholder="Mot de passe" required>
+<input type="text" id="vendeur-phone" placeholder="Téléphone" required>
+<select id="vendeur-ville" required></select>
+<button type="submit">Valider</button>
+</form>
+
+<div id="ajoutProduit" style="display:none">
+<h3>Ajouter Produit</h3>
+<form id="formProduit">
+<input type="text" id="nomProduit" placeholder="Nom produit" required>
+<textarea id="descProduit" placeholder="Description" required></textarea>
+<input type="number" id="prixProduit" placeholder="Prix" required>
+<input type="file" id="imageProduit" required>
+<button type="submit">Ajouter</button>
+</form>
+</div>
+</section>
+
+<script>
+const ADMIN_USER="papasta";
+const ADMIN_PASS="papasta3494";
+
+const villes=["Conakry - Kaloum","Conakry - Dixinn","Conakry - Ratoma","Conakry - Matam","Conakry - Matoto","Boké","Kindia","Labé","Mamou","Kankan","Faranah","Nzérékoré"];
+
+function remplirVilles(){
+vendeur-ville.innerHTML=villes.map(v=>`<option>${v}</option>`).join("");
+villeLivraison.innerHTML=villes.map(v=>`<option>${v}</option>`).join("");
+}
+remplirVilles();
+
+function toggleMenu(){
+menu-list.style.display=menu-list.style.display==="block"?"none":"block";
+}
+
+function showSection(id){
+document.querySelectorAll("section").forEach(s=>s.style.display="none");
+document.getElementById(id).style.display="block";
+}
+
+/* ADMIN LOGIN */
+function showAdminLogin(){
+let user=prompt("Adresse admin :");
+let pass=prompt("Mot de passe :");
+if(user===ADMIN_USER && pass===ADMIN_PASS){
+showSection("admin-section");
+afficherCommandes();
+}else alert("Accès refusé");
+}
+
+/* STOCKAGE */
+let produits=JSON.parse(localStorage.getItem("produits"))||[];
+let panier=JSON.parse(localStorage.getItem("panier"))||[];
+let commandes=JSON.parse(localStorage.getItem("commandes"))||[];
+let vendeurs=JSON.parse(localStorage.getItem("vendeurs"))||{};
+let clients=JSON.parse(localStorage.getItem("clients"))||{};
+let vendeurConnecte=null;
+
+/* CLIENT */
+clientForm.onsubmit=e=>{
+e.preventDefault();
+clients[clientUser.value]=clientPass.value;
+localStorage.setItem("clients",JSON.stringify(clients));
+alert("Client enregistré !");
+};
+
+/* VENDEUR */
+vendeurForm.onsubmit=e=>{
+e.preventDefault();
+let u=vendeur-username.value;
+let p=vendeur-password.value;
+
+if(vendeurs[u] && vendeurs[u]!==p){alert("Mot de passe incorrect");return;}
+
+vendeurs[u]=p;
+localStorage.setItem("vendeurs",JSON.stringify(vendeurs));
+
+vendeurConnecte=u;
+ajoutProduit.style.display="block";
+alert("Vendeur connecté");
+};
+
+/* PRODUITS */
+function afficherProduits(){
+produits-container.innerHTML="";
+produits.forEach((p,i)=>{
+produits-container.innerHTML+=`<div class="produit">
+<img src="${p.image}">
+<h4>${p.nom}</h4>
+<p>${p.prix} FG</p>
+<button onclick="ajouterAuPanier(${i})">Ajouter</button>
+</div>`;
+});
+}
+afficherProduits();
+
+function ajouterAuPanier(i){
+panier.push(produits[i]);
+localStorage.setItem("panier",JSON.stringify(panier));
+afficherPanier();
+showSection("panier-section");
+}
+
+function afficherPanier(){
+panier-container.innerHTML=panier.length?panier.map(p=>`<p>${p.nom} - ${p.prix} FG</p>`).join(""):"Panier vide";
+}
+
+/* AJOUT PRODUIT */
+formProduit.onsubmit=e=>{
+e.preventDefault();
+const r=new FileReader();
+r.onload=ev=>{
+produits.push({nom:nomProduit.value,description:descProduit.value,prix:prixProduit.value,image:ev.target.result,vendeur:vendeurConnecte});
+localStorage.setItem("produits",JSON.stringify(produits));
+afficherProduits();
+};
+r.readAsDataURL(imageProduit.files[0]);
+};
+
+/* COMMANDE */
+commandeFormPanier.onsubmit=e=>{
+e.preventDefault();
+commandes.push({clientNom:clientNom.value,clientTel:clientTel.value,receveurNom:receveurNom.value,receveurTel:receveurTel.value,ville:villeLivraison.value,produits:panier});
+localStorage.setItem("commandes",JSON.stringify(commandes));
+alert("Commande envoyée !");
+panier=[];localStorage.removeItem("panier");afficherPanier();
+};
+
+/* ADMIN VIEW */
+function afficherCommandes(){
+admin-commandes.innerHTML="";
+commandes.forEach((c,i)=>{
+admin-commandes.innerHTML+=`<div style="background:#660000;padding:10px;margin:10px 0">
+<h4>Commande #${i+1}</h4>
+<p>Client: ${c.clientNom} (${c.clientTel})</p>
+<p>Receveur: ${c.receveurNom} (${c.receveurTel})</p>
+<p>Ville: ${c.ville}</p>
+<ul>${c.produits.map(p=>`<li>${p.nom} - ${p.prix} FG (Vendeur: ${p.vendeur})</li>`).join("")}</ul>
+</div>`;
+});
+}
+</script>
+
+</body>
+                                       </html>

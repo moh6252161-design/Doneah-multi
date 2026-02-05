@@ -6,17 +6,14 @@ const firebaseConfig = {
   storageBucket: "TON_PROJET.appspot.com",
   messagingSenderId: "XXXX",
   appId: "XXXX"
-}
-apiKey: "TA_CLE_API",
-authDomain: "TON_PROJET.firebaseapp.com",
-projectId: "TON_PROJET",
-storageBucket: "TON_PROJET.appspot.com",
-messagingSenderId: "XXXX",
-appId: "XXXX"
+};
+
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
 
 // ☁️ CONFIG CLOUDINARY
-const cloudName = "TON_CLOUD_NAME";
-const uploadPreset = "TON_UPLOAD_PRESET";
+const cloudName = "dmwrnpkhw";           // ton Cloud Name
+const uploadPreset = "ton_upload_preset"; // ton preset unsigned
 
 async function ajouterProduit() {
   const vendeur = document.getElementById("vendeurNom").value;
@@ -24,11 +21,11 @@ async function ajouterProduit() {
   const prix = document.getElementById("prixProduit").value;
   const description = document.getElementById("descriptionProduit").value;
   const ville = document.getElementById("villeProduit").value;
-  const paiement = document.getElementById("modePaiement").value;
+  const mode = document.getElementById("modeTransaction").value;
   const imageFile = document.getElementById("imageProduit").files[0];
 
-  if (!vendeur || !nom || !prix || !description || !ville || !paiement || !imageFile) {
-    alert("Remplis tous les champs !");
+  if (!vendeur || !nom || !prix || !description || !ville || !mode || !imageFile) {
+    alert("Remplis tous les champs");
     return;
   }
 
@@ -48,12 +45,12 @@ async function ajouterProduit() {
     const imageUrl = data.secure_url;
 
     await db.collection("produits").add({
-      vendeur: vendeur,
-      nom: nom,
-      prix: prix,
-      description: description,
-      ville: ville,
-      paiement: paiement,
+      vendeur,
+      nom,
+      prix: Number(prix),
+      description,
+      ville,
+      mode,
       image: imageUrl,
       date: new Date()
     });
@@ -61,15 +58,15 @@ async function ajouterProduit() {
     document.getElementById("message").innerText = "Produit publié avec succès ✅";
 
     // Reset
-    document.getElementById("vendeurNom").value = "";
     document.getElementById("nomProduit").value = "";
     document.getElementById("prixProduit").value = "";
     document.getElementById("descriptionProduit").value = "";
     document.getElementById("villeProduit").value = "";
-    document.getElementById("modePaiement").value = "";
+    document.getElementById("modeTransaction").value = "";
     document.getElementById("imageProduit").value = "";
 
-  } catch (error) {
-    alert("Erreur : " + error);
+  } catch (err) {
+    console.error(err);
+    alert("Erreur : " + err);
   }
 }

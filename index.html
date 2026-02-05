@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Mini E-Commerce</title>
+
+<style>
+body{
+  font-family:Arial;
+  margin:0;
+  padding-top:70px;
+  background:#f5f5f5;
+}
+
+/* ===== MENU AGRANDI ===== */
+nav{
+  position:fixed;
+  top:0;
+  width:100%;
+  background:#cc0000;
+  padding:15px;
+}
+
+#menuBtn{
+  font-size:22px;
+  padding:12px 18px;
+}
+
+#menu{
+  display:none;
+  background:#b30000;
+  padding:20px;
+  width:320px;
+}
+
+#menu button{
+  width:100%;
+  padding:15px;
+  margin-bottom:12px;
+  font-size:18px;
+}
+
+/* ===== PRODUITS ===== */
+#produits{
+  padding:20px;
+}
+
+.produit{
+  background:#fff;
+  padding:15px;
+  margin-bottom:15px;
+  border-radius:8px;
+}
+
+.produit img{
+  width:100%;
+  max-height:180px;
+  object-fit:cover;
+}
+
+/* ===== PANIER ===== */
+#panier{
+  background:#fff;
+  padding:15px;
+  margin:20px;
+  border-radius:8px;
+}
+</style>
+</head>
+
+<body>
+
+<!-- MENU -->
+<nav>
+  <button id="menuBtn" onclick="toggleMenu()">☰ Menu</button>
+  <div id="menu">
+    <button onclick="showSection('produits')">Produits</button>
+    <button onclick="showSection('panier')">Panier</button>
+    <button onclick="showSection('adminLogin')">Admin</button>
+    <button onclick="toggleMenu()">❌ Fermer</button>
+  </div>
+</nav>
+
+<!-- PRODUITS -->
+<section id="produits">
+<h2>Produits</h2>
+
+<input id="recherche" placeholder="🔍 Rechercher un produit"
+onkeyup="rechercherProduit()" style="width:90%;padding:12px;font-size:18px">
+
+<div id="listeProduits"></div>
+</section>
+
+<!-- PANIER -->
+<section id="panier" style="display:none">
+<h2>Panier</h2>
+<div id="contenuPanier"></div>
+<p id="total"></p>
+
+<select id="ville">
+<option>Conakry</option>
+<option>Kindia</option>
+<option>Boké</option>
+<option>Labé</option>
+<option>Kankan</option>
+<option>Nzérékoré</option>
+<option>Faranah</option>
+<option>Kissidougou</option>
+<option>Macenta</option>
+<option>Siguiri</option>
+<option>Mamou</option>
+<option>Fria</option>
+<option>Dubréka</option>
+<option>Forécariah</option>
+<option>Télimélé</option>
+<option>Gaoual</option>
+<option>Koundara</option>
+<option>Pita</option>
+<option>Lélouma</option>
+<option>Mali</option>
+<option>Dabola</option>
+<option>Dinguiraye</option>
+<option>Kouroussa</option>
+<option>Beyla</option>
+<option>Guéckédou</option>
+<option>Lola</option>
+<option>Yomou</option>
+<option>Mandiana</option>
+<option>Kérouané</option>
+<option>Dalaba</option>
+<option>Tougué</option>
+<option>Koubia</option>
+<option>Faranah</option>
+</select>
+
+<br><br>
+<button onclick="validerCommande()">Valider la commande</button>
+</section>
+
+<!-- ADMIN -->
+<section id="adminLogin" style="display:none;padding:20px">
+<h3>Connexion Admin</h3>
+<input id="adminUser" placeholder="Utilisateur"><br><br>
+<input id="adminPass" type="password" placeholder="Mot de passe"><br><br>
+<button onclick="connexionAdmin()">Connexion</button>
+</section>
+
+<section id="adminPanel" style="display:none;padding:20px">
+<h3>Commandes reçues</h3>
+<div id="commandesAdmin"></div>
+</section>
+
+<script>
+/* ===== ADMIN FIXE ===== */
+const ADMIN_USERNAME="papasta";
+const ADMIN_PASSWORD="papasta3494";
+
+/* ===== DONNÉES ===== */
+let produits=[
+ {nom:"Samsung A32",prix:700000,image:"https://via.placeholder.com/300"},
+ {nom:"TV 32 pouces",prix:530000,image:"https://via.placeholder.com/300"}
+];
+
+let panier=[];
+let commandes=[];
+
+/* ===== MENU ===== */
+function toggleMenu(){
+ let m=document.getElementById("menu");
+ m.style.display=m.style.display==="block"?"none":"block";
+}
+
+function showSection(id){
+ document.querySelectorAll("section").forEach(s=>s.style.display="none");
+ document.getElementById(id).style.display="block";
+}
+
+/* ===== PRODUITS ===== */
+function afficherProduits(){
+ let html="";
+ produits.forEach((p,i)=>{
+  html+=`
+  <div class="produit">
+    <img src="${p.image}">
+    <h4>${p.nom}</h4>
+    <p>${p.prix} FG</p>
+    <button onclick="ajouterPanier(${i})">Ajouter</button>
+  </div>`;
+ });
+ listeProduits.innerHTML=html;
+}
+afficherProduits();
+
+function rechercherProduit(){
+ let mot=recherche.value.toLowerCase();
+ if(mot===""){afficherProduits();return;}
+ listeProduits.innerHTML="";
+ produits.forEach((p,i)=>{
+  if(p.nom.toLowerCase().includes(mot)){
+    listeProduits.innerHTML+=`
+    <div class="produit">
+      <h4>${p.nom}</h4>
+      <p>${p.prix} FG</p>
+      <button onclick="ajouterPanier(${i})">Ajouter</button>
+    </div>`;
+  }
+ });
+}
+
+/* ===== PANIER ===== */
+function ajouterPanier(i){
+ panier=[produits[i]]; // seul produit choisi
+ afficherPanier();
+}
+
+function supprimerPanier(){
+ panier=[];
+ afficherPanier();
+}
+
+function afficherPanier(){
+ let html="";
+ let total=0;
+ panier.forEach(p=>{
+  total+=p.prix;
+  html+=`${p.nom} - ${p.prix} FG
+  <button onclick="supprimerPanier()">❌</button>`;
+ });
+ contenuPanier.innerHTML=html;
+
+ let taux=ville.value==="Conakry"?0.08:0.12;
+ total+=total*taux;
+ document.getElementById("total").innerText="Total: "+total+" FG";
+}
+
+/* ===== COMMANDE ===== */
+function validerCommande(){
+ if(panier.length===0){alert("Panier vide");return;}
+ commandes.push(panier[0]);
+ commandesAdmin.innerHTML+=`<p>${panier[0].nom}</p>`;
+ panier=[];
+ afficherPanier();
+ alert("Commande envoyée à l’admin ✅");
+}
+
+/* ===== ADMIN ===== */
+function connexionAdmin(){
+ if(adminUser.value===ADMIN_USERNAME && adminPass.value===ADMIN_PASSWORD){
+  adminLogin.style.display="none";
+  adminPanel.style.display="block";
+ }else alert("Accès refusé");
+}
+</script>
+
+</body>
+  </html>

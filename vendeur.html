@@ -1,34 +1,33 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <title>Espace Vendeur</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Espace Vendeur</title>
 
-  <!-- Firebase version compatible -->
-  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
 
-  <style>
-    body { font-family: Arial; background:#f4f4f4; padding:20px; }
-    .box { background:white; padding:20px; border-radius:10px; max-width:500px; margin:auto; }
-    input, textarea { width:100%; padding:10px; margin-top:10px; }
-    button { margin-top:15px; padding:12px; background:#28a745; color:white; border:none; width:100%; font-size:16px; }
-  </style>
+<style>
+body { font-family: Arial; background:#f4f4f4; padding:20px; }
+.box { background:white; padding:20px; border-radius:10px; max-width:500px; margin:auto; }
+input, textarea { width:100%; padding:10px; margin-top:10px; }
+button { margin-top:15px; padding:12px; background:#28a745; color:white; border:none; width:100%; font-size:16px; }
+</style>
 </head>
 <body>
 
 <div class="box">
-  <h2>Ajouter un produit</h2>
+<h2>Ajouter un produit</h2>
 
-  <input type="text" id="vendeurNom" placeholder="Nom du vendeur"><br>
-  <input type="text" id="nomProduit" placeholder="Nom du produit"><br>
-  <input type="number" id="prixProduit" placeholder="Prix (GNF)"><br>
-  <textarea id="descriptionProduit" placeholder="Description du produit"></textarea><br>
-  <input type="file" id="imageProduit" accept="image/*"><br>
+<input type="text" id="vendeurNom" placeholder="Nom du vendeur"><br>
+<input type="text" id="nomProduit" placeholder="Nom du produit"><br>
+<input type="number" id="prixProduit" placeholder="Prix (GNF)"><br>
+<textarea id="descriptionProduit" placeholder="Description"></textarea><br>
+<input type="file" id="imageProduit" accept="image/*"><br>
+<button onclick="ajouterProduit()">Publier le produit</button>
 
-  <button onclick="ajouterProduit()">Publier le produit</button>
-
-  <p id="message"></p>
+<p id="message"></p>
 </div>
 
 <script src="vendeur.js"></script>

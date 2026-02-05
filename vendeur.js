@@ -6,10 +6,13 @@ const firebaseConfig = {
   storageBucket: "TON_PROJET.appspot.com",
   messagingSenderId: "XXXX",
   appId: "XXXX"
-};
-
-firebase.initializeApp(firebaseConfig);
-const db = firebase.firestore();
+}
+apiKey: "TA_CLE_API",
+authDomain: "TON_PROJET.firebaseapp.com",
+projectId: "TON_PROJET",
+storageBucket: "TON_PROJET.appspot.com",
+messagingSenderId: "XXXX",
+appId: "XXXX"
 
 // ☁️ CONFIG CLOUDINARY
 const cloudName = "TON_CLOUD_NAME";

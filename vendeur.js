@@ -1,26 +1,23 @@
-// 🔥 CONFIG FIREBASE
-const firebaseConfig = {
+// 🔥 CONFIG FIREBASE (REMPLACE PAR TES INFOS)
+var firebaseConfig = {
   apiKey: "TA_CLE_API",
   authDomain: "TON_PROJET.firebaseapp.com",
   projectId: "TON_PROJET",
-  storageBucket: "TON_PROJET.appspot.com",
-  messagingSenderId: "XXXX",
-  appId: "XXXX"
 };
 
 firebase.initializeApp(firebaseConfig);
-const db = firebase.firestore();
+var db = firebase.firestore();
 
-// ☁️ CONFIG CLOUDINARY
-const cloudName = "TON_CLOUD_NAME";
-const uploadPreset = "TON_UPLOAD_PRESET";
+// ☁️ CONFIG CLOUDINARY (REMPLACE AUSSI)
+var cloudName = "TON_CLOUD_NAME";
+var uploadPreset = "TON_UPLOAD_PRESET";
 
-async function ajouterProduit() {
-  const vendeur = document.getElementById("vendeurNom").value;
-  const nom = document.getElementById("nomProduit").value;
-  const prix = document.getElementById("prixProduit").value;
-  const description = document.getElementById("descriptionProduit").value;
-  const imageFile = document.getElementById("imageProduit").files[0];
+function ajouterProduit() {
+  var vendeur = document.getElementById("vendeurNom").value;
+  var nom = document.getElementById("nomProduit").value;
+  var prix = document.getElementById("prixProduit").value;
+  var description = document.getElementById("descriptionProduit").value;
+  var imageFile = document.getElementById("imageProduit").files[0];
 
   if (!vendeur || !nom || !prix || !description || !imageFile) {
     alert("Remplis tous les champs");
@@ -29,28 +26,31 @@ async function ajouterProduit() {
 
   document.getElementById("message").innerText = "Upload de l'image...";
 
-  // 📤 Envoi image vers Cloudinary
-  const formData = new FormData();
+  var formData = new FormData();
   formData.append("file", imageFile);
   formData.append("upload_preset", uploadPreset);
 
-  const res = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
+  fetch("https://api.cloudinary.com/v1_1/" + cloudName + "/image/upload", {
     method: "POST",
     body: formData
+  })
+  .then(res => res.json())
+  .then(data => {
+    var imageUrl = data.secure_url;
+
+    return db.collection("produits").add({
+      vendeur: vendeur,
+      nom: nom,
+      prix: prix,
+      description: description,
+      image: imageUrl,
+      date: new Date()
+    });
+  })
+  .then(() => {
+    document.getElementById("message").innerText = "Produit publié avec succès ✅";
+  })
+  .catch(error => {
+    alert("Erreur: " + error);
   });
-
-  const data = await res.json();
-  const imageUrl = data.secure_url;
-
-  // 💾 Enregistrement du produit dans Firestore
-  await db.collection("produits").add({
-    vendeur: vendeur,
-    nom: nom,
-    prix: prix,
-    description: description,
-    image: imageUrl,
-    date: new Date()
-  });
-
-  document.getElementById("message").innerText = "Produit publié avec succès ✅";
 }

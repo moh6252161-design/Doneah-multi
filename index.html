@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Papasta Shop</title>
+
+<style>
+body{
+font-family:Arial;
+margin:0;
+background:#0a7f3f;
+color:white;
+}
+
+header{
+background:#065c2c;
+padding:20px;
+display:flex;
+justify-content:space-between;
+align-items:center;
+font-size:22px;
+}
+
+#menu{
+display:none;
+background:#097a3c;
+padding:20px;
+font-size:20px;
+}
+
+button{
+background:#0c9448;
+color:white;
+border:none;
+padding:10px 15px;
+margin:5px;
+font-size:16px;
+border-radius:8px;
+cursor:pointer;
+transition:0.1s;
+}
+
+button:active{
+transform:scale(0.95);
+background:#066b33;
+}
+
+input,select{
+width:100%;
+padding:8px;
+margin:5px 0;
+font-size:16px;
+}
+
+.produit{
+background:#13a455;
+padding:10px;
+margin:10px;
+border-radius:10px;
+display:inline-block;
+width:200px;
+vertical-align:top;
+}
+
+#panierBox{
+background:#065c2c;
+padding:15px;
+}
+
+</style>
+</head>
+
+<body>
+
+<header>
+☰ <button onclick="toggleMenu()">Menu</button>
+<div>🛒 Panier (<span id="compteur">0</span>)</div>
+</header>
+
+<div id="menu">
+<button onclick="showSection('produits')">Produits</button>
+<button onclick="showSection('admin')">Admin</button>
+<button onclick="toggleMenu()">Fermer</button>
+</div>
+
+<div style="padding:20px">
+
+<input type="text" id="search" placeholder="Rechercher produit..." onkeyup="rechercher()">
+
+<section id="produits"></section>
+
+<section id="panierBox">
+<h2>Panier</h2>
+<div id="panier"></div>
+<div id="totaux"></div>
+</section>
+
+<section id="admin" style="display:none">
+<h2>Admin</h2>
+<div id="adminContent"></div>
+</section>
+
+</div>
+
+<script>
+
+let produits=[
+{nom:"Samsung A32",prix:700000,stock:20},
+{nom:"TV 32 pouces",prix:530000,stock:15}
+];
+
+let panier=[];
+let commandes=[];
+
+function toggleMenu(){
+document.getElementById("menu").style.display=
+document.getElementById("menu").style.display==="block"?"none":"block";
+}
+
+function showSection(id){
+if(id==="admin"){
+let user=prompt("Nom admin");
+let pass=prompt("Mot de passe");
+if(user!=="papasta"||pass!=="papasta3494"){
+alert("Accès refusé");
+return;
+}
+afficherCommandes();
+}
+document.getElementById("admin").style.display="none";
+if(id==="admin") document.getElementById("admin").style.display="block";
+toggleMenu();
+}
+
+function afficherProduits(liste=produits){
+let html="";
+liste.forEach((p,i)=>{
+html+=`
+<div class="produit">
+<h3>${p.nom}</h3>
+<p>${p.prix} FG</p>
+<p>Stock: ${p.stock}</p>
+<button onclick="ajouter(${i})">Ajouter</button>
+</div>`;
+});
+document.getElementById("produits").innerHTML=html;
+}
+afficherProduits();
+
+function rechercher(){
+let val=document.getElementById("search").value.toLowerCase();
+let filtre=produits.filter(p=>p.nom.toLowerCase().includes(val));
+afficherProduits(filtre);
+}
+
+function ajouter(i){
+if(navigator.vibrate) navigator.vibrate(50);
+if(produits[i].stock<=0){
+alert("Stock épuisé");
+return;
+}
+panier.push({...produits[i],quantite:1});
+produits[i].stock--;
+majPanier();
+}
+
+function majPanier(){
+let html="";
+let total=0;
+
+panier.forEach((p,index)=>{
+let remise=0;
+if(p.quantite>=50) remise=0.05;
+else if(p.quantite>=20) remise=0.04;
+else if(p.quantite>=10) remise=0.02;
+
+let prixTotal=p.prix*p.quantite*(1-remise);
+total+=prixTotal;
+
+html+=`
+<div>
+${p.nom} - ${p.quantite}
+<button onclick="supprimer(${index})">Supprimer</button>
+</div>`;
+});
+
+let livraison=total*0.08;
+let totalFinal=total+livraison;
+
+document.getElementById("panier").innerHTML=html;
+document.getElementById("compteur").innerText=panier.length;
+document.getElementById("totaux").innerHTML=
+`Total: ${total} FG<br>
+Livraison (8%): ${livraison} FG<br>
+Total Général: ${totalFinal} FG<br>
+<p>Paiement:
+Orange Money +224625216110<br>
+Mobile Money +224660452333<br>
+Envoyer preuve WhatsApp au 625216110</p>
+<button onclick="valider()">Valider commande</button>`;
+}
+
+function supprimer(i){
+panier.splice(i,1);
+majPanier();
+}
+
+function valider(){
+let receveur=prompt("Nom receveur");
+let tel=prompt("Téléphone receveur");
+let ville=prompt("Ville");
+
+commandes.push({panier,receveur,tel,ville});
+alert("Commande enregistrée");
+panier=[];
+majPanier();
+}
+
+function afficherCommandes(){
+let html="";
+commandes.forEach((c,i)=>{
+html+=`
+<div>
+<h3>Commande ${i+1}</h3>
+<p>Receveur: ${c.receveur}</p>
+<p>Ville: ${c.ville}</p>
+<ul>
+${c.panier.map(p=>`<li>${p.nom} x${p.quantite}</li>`).join("")}
+</ul>
+</div>`;
+});
+document.getElementById("adminContent").innerHTML=html;
+}
+
+</script>
+
+</body>
+  </html>

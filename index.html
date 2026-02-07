@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Doneah-Multi Marketplace</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.css"/>
+<link rel="stylesheet" href="style.css">
+</head>
+<body class="theme-light">
+
+<header>
+  <h1>Doneah-Multi</h1>
+  <button id="menuBtn"><i class="fa-solid fa-bars"></i></button>
+  <button id="themeBtn"><i class="fa-solid fa-moon"></i></button>
+</header>
+
+<!-- MENU -->
+<nav id="menu">
+  <button id="closeMenu">❌</button>
+  <button data-go="sectionProduits">Produits</button>
+  <button data-go="sectionPanier">Panier</button>
+  <button data-go="sectionInscription">Inscription / Connexion</button>
+  <button data-go="sectionAdmin">Admin</button>
+  <button data-go="sectionChat">Chat IA</button>
+</nav>
+
+<!-- SLIDER PRODUITS -->
+<div class="swiper mySwiper">
+  <div class="swiper-wrapper" id="sliderProduits"></div>
+  <div class="swiper-pagination"></div>
+</div>
+
+<!-- PRODUITS -->
+<section id="sectionProduits">
+  <h2>Nos Produits</h2>
+  <input type="text" id="recherche" placeholder="Rechercher un produit...">
+  <div id="listeProduits" class="produits-grid"></div>
+</section>
+
+<!-- PANIER -->
+<section id="sectionPanier" style="display:none;">
+  <h2>Panier <span id="compteurPanier">0</span> 🛒</h2>
+  <div id="listePanier"></div>
+  <p>Total: <span id="total">0</span> FG</p>
+  <p>Frais: <span id="frais">0</span> FG</p>
+  <p>Grand total: <span id="grandTotal">0</span> FG</p>
+  <h3>Livraison</h3>
+  <input type="text" id="clientNom" placeholder="Nom client">
+  <select id="ville" required></select>
+  <input type="text" id="recepteurNom" placeholder="Nom récepteur">
+  <input type="text" id="adresse" placeholder="Adresse">
+  <h3>Paiement</h3>
+  <select id="moyenPaiement">
+    <option value="">Choisir un moyen</option>
+    <option value="Orange Money">Orange Money +224625216110</option>
+    <option value="Mobile Money">Mobile Money +224625216110</option>
+    <option value="Livraison">Paiement à la livraison</option>
+  </select>
+  <button id="valider">Valider commande</button>
+  <p id="ok"></p>
+</section>
+
+<!-- INSCRIPTION / CONNEXION -->
+<section id="sectionInscription" style="display:none;">
+  <h2>Inscription / Connexion</h2>
+  <h3>Client</h3>
+  <input type="text" id="clientUser" placeholder="Nom">
+  <input type="email" id="clientEmail" placeholder="Email">
+  <input type="password" id="clientPass" placeholder="Mot de passe">
+  <button id="registerClient">S’inscrire</button>
+  <h3>Vendeur</h3>
+  <input type="text" id="vendeurUser" placeholder="Nom">
+  <input type="email" id="vendeurEmail" placeholder="Email">
+  <input type="password" id="vendeurPass" placeholder="Mot de passe">
+  <input type="text" id="magasin" placeholder="Nom du magasin">
+  <button id="registerVendeur">S’inscrire</button>
+  <p id="inscriptionOk"></p>
+</section>
+
+<!-- ADMIN -->
+<section id="sectionAdmin" style="display:none;">
+  <h2>Admin</h2>
+  <input type="text" id="adminUser" placeholder="Utilisateur">
+  <input type="password" id="adminPass" placeholder="Mot de passe">
+  <button id="loginAdmin">Connexion Admin</button>
+  <div id="adminCommandes"></div>
+</section>
+
+<!-- CHAT IA -->
+<section id="sectionChat" style="display:none;">
+  <h2 id="chatHeader">💬 Assistant IA</h2>
+  <div id="chatBody"></div>
+  <div id="chatInputContainer">
+    <input type="text" id="chatInput" placeholder="Écrire un message...">
+    <button id="chatSend">Envoyer</button>
+  </div>
+</section>
+
+<script src="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.js"></script>
+<script src="app.js" defer></script>
+</body>
+  </html>

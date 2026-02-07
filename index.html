@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Site E-commerce</title>
+<style>
+body {font-family: Arial; background:#00aa44; color:#fff; padding:20px; font-size:18px;}
+h2,h3,h4{font-size:22px}
+
+nav {position:fixed;top:20px;left:20px;z-index:1000;}
+nav button {font-size:22px;padding:12px 18px; margin-right:10px;}
+#menu-list {display:none;background:#007733;padding:20px;font-size:22px;border-radius:8px;width:250px;}
+#menu-list li{margin:15px 0;cursor:pointer;list-style:none;}
+#cart-counter{background:red;color:white;padding:2px 6px;border-radius:50%;font-size:16px;margin-left:8px;}
+
+section{margin-top:180px; display:none;}
+
+.produit{background:#66bb66; padding:10px; margin:10px; width:200px; display:inline-block; text-align:center}
+.produit img{width:160px;height:160px;object-fit:cover}
+
+button{padding:8px 12px; font-size:16px; background:#004400; color:white; border:none; margin:4px 0}
+input,select,textarea{width:100%; padding:8px; margin-bottom:10px; font-size:16px}
+
+.paiement-box{background:#008800;padding:10px;border-radius:8px;margin:10px 0}
+</style>
+</head>
+<body>
+
+<nav>
+<button onclick="toggleMenu()">☰ Menu</button>
+<ul id="menu-list">
+<li onclick="showSection('produits-section')">Accueil <span id="cart-counter">0</span></li>
+<li onclick="showSection('vendeur-section')">Vendeur</li>
+<li onclick="showSection('panier-section')">Panier</li>
+<li onclick="showSection('admin-section')">Admin</li>
+<li><button onclick="closeMenu()">Fermer</button></li>
+</ul>
+</nav>
+
+<section id="produits-section" style="display:block">
+<h2>Produits</h2>
+<input type="text" id="search" placeholder="Rechercher un produit..." oninput="searchProduits()">
+<div id="produits-container"></div>
+</section>
+
+<section id="panier-section">
+<h2>Panier</h2>
+<div id="panier-container"></div>
+
+<h3>Informations Client</h3>
+<form id="commandeFormPanier">
+<input type="text" id="clientNom" placeholder="Votre nom" required>
+<input type="text" id="clientTel" placeholder="Votre numéro" required>
+
+<h3>Informations Receveur</h3>
+<input type="text" id="receveurNom" placeholder="Nom du receveur" required>
+<input type="text" id="receveurTel" placeholder="Téléphone du receveur" required>
+
+<select id="villeLivraison" required></select>
+
+<div class="paiement-box">
+<h4>Moyens de paiement</h4>
+<p>🟠 Orange Money : <b>+224 625 21 61 10</b></p>
+<p>🔵 Mobile Money : <b>+224 660 45 23 33</b></p>
+<p>Après paiement, envoyez la capture sur WhatsApp au 625216110</p>
+</div>
+
+<button type="submit">Valider la commande</button>
+</form>
+</section>
+
+<section id="admin-section">
+<h2>Commandes reçues (Admin)</h2>
+<div id="admin-commandes"></div>
+</section>
+
+<section id="vendeur-section">
+<h3>Inscription Vendeur</h3>
+<form id="vendeurForm">
+<input type="text" id="vendeur-username" placeholder="Nom utilisateur" required>
+<input type="text" id="vendeur-phone" placeholder="Téléphone" required>
+<select id="vendeur-ville" required></select>
+<button type="submit">Valider</button>
+</form>
+
+<div id="ajoutProduit" style="display:none">
+<h3>Ajouter Produit</h3>
+<form id="formProduit">
+<input type="text" id="nomProduit" placeholder="Nom produit" required>
+<textarea id="descProduit" placeholder="Description" required></textarea>
+<input type="number" id="prixProduit" placeholder="Prix" required>
+<input type="file" id="imageProduit" required>
+<select id="quantiteProduit" required>
+<option value="1">1</option>
+<option value="2">2</option>
+<option value="3">3</option>
+<option value="4">4</option>
+<option value="5">5</option>
+</select>
+<button type="submit">Ajouter</button>
+</form>
+</div>
+</section>
+
+<script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
+
+<script>
+// ==================== FIREBASE CONFIG ====================
+const firebaseConfig = {
+  apiKey: "TON_API_KEY",
+  authDomain: "TON_AUTH_DOMAIN",
+  projectId: "TON_PROJECT_ID",
+  storageBucket: "TON_STORAGE_BUCKET",
+  messagingSenderId: "TON_SENDER_ID",
+  appId: "TON_APP_ID"
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+
+// ==================== VILLES ====================
+const villes = ["Conakry - Kaloum","Conakry - Dixinn","Conakry - Ratoma","Conakry - Matam","Conakry - Matoto","Boké","Kindia","Labé","Mamou","Kankan","Faranah","Nzérékoré"];
+document.getElementById("vendeur-ville").innerHTML=villes.map(v=>`<option>${v}</option>`).join("");
+document.getElementById("villeLivraison").innerHTML=villes.map(v=>`<option>${v}</option>`).join("");
+
+// ==================== MENU ====================
+function toggleMenu(){document.getElementById("menu-list").style.display="block";}
+function closeMenu(){document.getElementById("menu-list").style.display="none";}
+
+// ==================== STOCKAGE LOCAL ====================
+let produits=[], panier=[], commandes=[], vendeurConnecte=null;
+const cartCounter=document.getElementById("cart-counter");
+
+// ==================== AFFICHER PRODUITS ====================
+function loadProduits(){
+  db.collection("produits").get().then(snap=>{
+    produits=[];
+    snap.forEach(doc=>{produits.push({...doc.data(), id:doc.id});});
+    afficherProduits();
+  });
+}
+
+function afficherProduits(filter=""){
+  const c=document.getElementById("produits-container");
+  c.innerHTML="";
+  const liste = produits.filter(p=>p.nom.toLowerCase().includes(filter.toLowerCase()));
+  liste.forEach(p=>{
+    const total = p.prix * (p.quantite || 1) * 1.08; // frais livraison
+    c.innerHTML+=`<div class="produit">
+    <img src="${p.image}">
+    <h4>${p.nom}</h4>
+    <p>${p.prix} FG</p>
+    <p>Quantité: ${p.quantite || 1}</p>
+    <p>Total avec livraison: ${Math.round(total)} FG</p>
+    <button onclick="commander(${p.id})">Commander</button>
+    </div>`;
+  });
+}
+
+// ==================== RECHERCHE ====================
+function searchProduits(){afficherProduits(document.getElementById("search").value);}
+
+// ==================== PANIER ====================
+function updateCart(){cartCounter.innerText=panier.length;}
+function commander(id){
+  const prod = produits.find(p=>p.id===id);
+  if(!prod) return;
+  panier=[prod];
+  showSection("panier-section");
+  afficherPanier();
+}
+
+function afficherPanier(){
+  const c=document.getElementById("panier-container");
+  if(panier.length===0){c.innerHTML="<p>Panier vide</p>"; return;}
+  c.innerHTML="";
+  panier.forEach((p,i)=>{
+    const total = p.prix * (p.quantite || 1) * 1.08;
+    c.innerHTML+=`<p>${p.nom} - ${p.prix} FG x ${p.quantite || 1} = ${Math.round(total)} FG 
+    <button onclick="supprimerPanier(${i})">Supprimer</button></p>`;
+  });
+  updateCart();
+}
+
+function supprimerPanier(index){
+  panier.splice(index,1);
+  afficherPanier();
+}
+
+// ==================== VENDEUR ====================
+document.getElementById("vendeurForm").onsubmit=e=>{
+e.preventDefault();
+vendeurConnecte={
+username:document.getElementById("vendeur-username").value,
+phone:document.getElementById("vendeur-phone").value,
+ville:document.getElementById("vendeur-ville").value
+};
+document.getElementById("ajoutProduit").style.display="block";
+alert("Vendeur enregistré");
+};
+
+document.getElementById("formProduit").onsubmit=e=>{
+e.preventDefault();
+const file=document.getElementById("imageProduit").files[0];
+const formData=new FormData();
+formData.append("file", file);
+formData.append("upload_preset", "CLOUDINARY_UPLOAD_PRESET");
+
+fetch("https://api.cloudinary.com/v1_1/CLOUDINARY_CLOUD_NAME/image/upload", {
+  method:"POST", body:formData
+}).then(res=>res.json()).then(data=>{
+  db.collection("produits").add({
+    nom:document.getElementById("nomProduit").value,
+    description:document.getElementById("descProduit").value,
+    prix:parseFloat(document.getElementById("prixProduit").value),
+    quantite:parseInt(document.getElementById("quantiteProduit").value),
+    image:data.secure_url,
+    vendeur:vendeurConnecte.username
+  }).then(()=>{loadProduits(); alert("Produit ajouté !");});
+});
+};
+
+// ==================== COMMANDE ====================
+document.getElementById("commandeFormPanier").onsubmit=e=>{
+e.preventDefault();
+const client={nom:clientNom.value,tel:clientTel.value};
+const receveur={nom:receveurNom.value,tel:receveurTel.value,ville:villeLivraison.value};
+panier.forEach(p=>{
+  db.collection("commandes").add({client, receveur, produit:p});
+});
+alert("Commande enregistrée !");
+panier=[]; afficherPanier();
+};
+
+// ==================== ADMIN ====================
+function loadCommandes(){
+  db.collection("commandes").get().then(snap=>{
+    commandes=[];
+    snap.forEach(doc=>{commandes.push({...doc.data(), id:doc.id});});
+    afficherCommandes();
+  });
+}
+
+function afficherCommandes(){
+  const c=document.getElementById("admin-commandes");
+  c.innerHTML="";
+  commandes.forEach(cmd=>{
+    const p = cmd.produit;
+    c.innerHTML+=`<div style="background:#006600;padding:10px;margin-bottom:10px">
+    <p>Client: ${cmd.client.nom} (${cmd.client.tel})</p>
+    <p>Receveur: ${cmd.receveur.nom} (${cmd.receveur.tel})</p>
+    <p>Ville: ${cmd.receveur.ville}</p>
+    <p>Produit: ${p.nom} - ${p.prix} FG</p>
+    </div>`;
+  });
+}
+
+// ==================== INIT ====================
+loadProduits(); loadCommandes();
+</script>
+</body>
+  </html>

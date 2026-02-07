@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Doneah-Multi Marketplace</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="theme-light">
+
+  <!-- HEADER -->
+  <header>
+    <button id="menuBtn">☰ Menu</button>
+    <h1>Doneah-Multi</h1>
+    <button id="themeBtn">🌙</button>
+  </header>
+
+  <!-- MENU -->
+  <div id="menu">
+    <button id="closeMenu">❌</button>
+    <button data-go="sectionProduits">Produits</button>
+    <button data-go="sectionPanier">Panier</button>
+    <button data-go="sectionAdmin">Admin</button>
+    <button data-go="sectionChat">Chat IA</button>
+  </div>
+
+  <!-- SECTIONS -->
+  <section id="sectionProduits">
+    <input type="text" id="recherche" placeholder="Rechercher un produit">
+    <div id="listeProduits"></div>
+    <h3>Ajouter un produit (vendeur)</h3>
+    <input type="text" id="pNom" placeholder="Nom du produit">
+    <input type="number" id="pPrix" placeholder="Prix">
+    <input type="file" id="pImage">
+    <button id="ajouterProduit">Ajouter produit</button>
+  </section>
+
+  <section id="sectionPanier" style="display:none;">
+    <h2>Panier</h2>
+    <div id="listePanier"></div>
+    <p>Total: <span id="total">0</span> FG</p>
+    <p>Frais: <span id="frais">0</span> FG</p>
+    <p>Grand total: <span id="grandTotal">0</span> FG</p>
+    <h3>Valider commande</h3>
+    <input type="text" id="clientNom" placeholder="Nom du client">
+    <input type="text" id="ville" placeholder="Ville">
+    <input type="text" id="recepteurNom" placeholder="Nom du récepteur">
+    <button id="valider">Valider</button>
+    <p id="ok"></p>
+  </section>
+
+  <section id="sectionAdmin" style="display:none;">
+    <h2>Admin</h2>
+    <input type="text" id="adminUser" placeholder="Utilisateur">
+    <input type="password" id="adminPass" placeholder="Mot de passe">
+    <button id="loginAdmin">Connexion Admin</button>
+    <div id="adminCommandes"></div>
+  </section>
+
+  <section id="sectionChat" style="display:none;">
+    <h2 id="chatHeader">💬 Assistant IA (cliquez pour ouvrir/fermer)</h2>
+    <div id="chatBody"></div>
+    <div id="chatInputContainer">
+      <input type="text" id="chatInput" placeholder="Écrire un message...">
+      <button id="chatSend">Envoyer</button>
+    </div>
+  </section>
+
+  <script src="app.js" defer></script>
+</body>
+        </html>

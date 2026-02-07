@@ -1,0 +1,75 @@
+/* ===== TYPOGRAPHIE ===== */
+body {
+  font-family: 'Montserrat', 'Poppins', sans-serif;
+  margin:0; padding:0;
+  background:#f5f5f5; color:#333;
+  transition: all 0.3s ease;
+}
+h1,h2 { font-family: 'Montserrat', sans-serif; }
+
+/* ===== HEADER ===== */
+header {
+  background:#ff4d4d;
+  color:#fff; text-align:center;
+  padding:20px 0; position:sticky; top:0;
+  z-index:1000;
+  display:flex; justify-content:space-between; align-items:center;
+}
+header h1 { margin-left:15px; font-size:1.8em; }
+header button {
+  background:#fff; color:#ff4d4d;
+  border:none; padding:10px; border-radius:50%;
+  cursor:pointer; margin-right:15px; transition: transform 0.2s;
+}
+header button:hover { transform: scale(1.1); }
+
+/* ===== SLIDER ===== */
+.swiper { width:90%; margin:20px auto; border-radius:10px; overflow:hidden; }
+.swiper-slide img { width:100%; border-radius:10px; transition: transform 0.3s ease; }
+.swiper-slide img:hover { transform: scale(1.05); }
+
+/* ===== PRODUITS ===== */
+.produits-grid { display:flex; flex-wrap:wrap; gap:20px; justify-content:center; }
+.produit {
+  border:1px solid #ccc; border-radius:10px;
+  background:#fff; padding:15px; width:220px;
+  text-align:center; transition: transform 0.3s, box-shadow 0.3s;
+}
+.produit:hover { transform: translateY(-5px); box-shadow:0 10px 15px rgba(0,0,0,0.2); }
+.produit img { width:100%; border-radius:10px; }
+.produit button {
+  margin-top:10px; background:#ff4d4d;
+  color:#fff; border:none; padding:10px 15px;
+  border-radius:5px; cursor:pointer; transition: background 0.3s;
+}
+.produit button:hover { background:#e63b3b; }
+
+/* ===== PANIER ===== */
+#listePanier { border:1px solid #ccc; border-radius:10px; padding:10px; margin-bottom:10px; }
+
+/* ===== CONTACT ===== */
+#sectionContact input, #sectionContact textarea {
+  width:100%; padding:10px; margin:5px 0;
+  border-radius:5px; border:1px solid #ccc;
+}
+#sectionContact button {
+  background:#ff4d4d; color:#fff;
+  border:none; padding:10px 15px; border-radius:5px;
+  cursor:pointer; transition: background 0.3s;
+}
+#sectionContact button:hover { background:#e63b3b; }
+
+/* ===== FOOTER ===== */
+footer {
+  background:#333; color:#fff; padding:20px; text-align:center;
+}
+footer .social a {
+  color:#fff; margin:0 10px; font-size:1.2em; transition: color 0.3s;
+}
+footer .social a:hover { color:#ff4d4d; }
+
+/* ===== THEME DARK ===== */
+body.theme-dark {
+  background:#1e1e1e; color:#f0f0f0;
+}
+body.theme-dark section { background:#2c2c2c; box-shadow:0 0 10px rgba(255,255,255,0.1); }

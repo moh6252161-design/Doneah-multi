@@ -1,0 +1,164 @@
+/* ==================== RESET & BASE ==================== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f5f5f5;
+  color: #333;
+  line-height: 1.5;
+  padding: 10px;
+}
+
+/* ==================== HEADER ==================== */
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #ff4d4d;
+  color: #fff;
+  padding: 10px 15px;
+  border-radius: 5px;
+}
+
+header h1 {
+  font-size: 1.5em;
+}
+
+header button {
+  background-color: #fff;
+  color: #ff4d4d;
+  border: none;
+  padding: 8px 12px;
+  font-size: 1.2em;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+/* ==================== MENU ==================== */
+#menu {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 250px;
+  height: 100%;
+  background-color: #fff;
+  border-right: 2px solid #ff4d4d;
+  padding: 20px;
+  z-index: 1000;
+  overflow-y: auto;
+}
+
+#menu button {
+  display: block;
+  width: 100%;
+  padding: 10px;
+  margin: 5px 0;
+  border: 1px solid #ff4d4d;
+  background-color: #fff;
+  color: #ff4d4d;
+  font-weight: bold;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+/* ==================== SECTIONS ==================== */
+section {
+  margin: 20px 0;
+  padding: 10px;
+  background-color: #fff;
+  border-radius: 5px;
+  box-shadow: 0 0 5px rgba(0,0,0,0.1);
+}
+
+/* ==================== PRODUITS ==================== */
+#listeProduits, #listePanier, #adminCommandes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.produit {
+  border: 1px solid #ccc;
+  padding: 8px;
+  border-radius: 5px;
+  width: calc(50% - 10px);
+  background-color: #fff;
+}
+
+.produit img {
+  width: 100%;
+  height: auto;
+  border-radius: 5px;
+}
+
+.produit button {
+  margin-top: 5px;
+  background-color: #ff4d4d;
+  color: #fff;
+  border: none;
+  padding: 5px 8px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+/* ==================== PANIER ==================== */
+#sectionPanier p, #sectionPanier h3 {
+  margin: 5px 0;
+}
+
+#sectionPanier input, #sectionProduits input {
+  padding: 5px;
+  margin: 5px 0;
+  width: 100%;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}
+
+/* ==================== CHAT IA ==================== */
+#chatBody {
+  background-color: #e6f0ff;
+  border-radius: 5px;
+  padding: 5px;
+  margin-top: 5px;
+}
+
+#chatBody div {
+  margin-bottom: 5px;
+}
+
+#chatInputContainer {
+  display: flex;
+  gap: 5px;
+  margin-top: 5px;
+}
+
+#chatInputContainer input {
+  flex: 1;
+  padding: 5px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}
+
+#chatInputContainer button {
+  background-color: #3366ff;
+  color: #fff;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+/* ==================== RESPONSIVE ==================== */
+@media (max-width: 600px) {
+  .produit {
+    width: 100%;
+  }
+
+  #menu {
+    width: 80%;
+  }
+}

@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Doneah-Mahli</title>
+<link rel="stylesheet" href="style.css">
+<script type="module" src="prestataires.js"></script>
+</head>
+<body>
+<h2>Rechercher un service</h2>
+<div style="text-align:center;">
+    <select id="metier">
+        <option value="Électricien">Électricien</option>
+        <option value="Plombier">Plombier</option>
+    </select>
+    <select id="quartier">
+        <option value="Ratoma">Ratoma</option>
+        <option value="Matam">Matam</option>
+    </select>
+    <button onclick="afficherPrestataires(document.getElementById('metier').value,document.getElementById('quartier').value,'resultats')">Rechercher</button>
+</div>
+<div id="resultats"></div>
+</body>
+</html>

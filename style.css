@@ -1,0 +1,73 @@
+/* style.css */
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+
+body {
+    font-family: 'Roboto', sans-serif;
+    background-color: #f9f9f9;
+    margin: 0;
+    padding: 0;
+}
+
+h2 {
+    text-align: center;
+    color: #1E3A8A;
+    margin-top: 20px;
+}
+
+input, select, button {
+    width: 100%;
+    max-width: 400px;
+    margin: 10px auto;
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    display: block;
+    font-size: 16px;
+}
+
+button {
+    background-color: #F97316;
+    color: white;
+    border: none;
+    transition: background 0.3s;
+}
+
+button:hover {
+    background-color: #EA580C;
+}
+
+#resultats {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+#resultats div {
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    padding: 20px;
+    margin: 10px;
+    width: 250px;
+    text-align: center;
+    transition: transform 0.3s;
+}
+
+#resultats div:hover {
+    transform: translateY(-5px);
+}
+
+a {
+    text-decoration: none;
+    color: white;
+    background-color: #25D366;
+    padding: 10px 15px;
+    border-radius: 8px;
+    display: inline-block;
+    margin-top: 10px;
+}
+
+a:hover {
+    background-color: #128C7E;
+}

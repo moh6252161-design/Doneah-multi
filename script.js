@@ -99,3 +99,7 @@ function enregistrerContact(prestataireId, clientNom){
   const date = new Date().toISOString();
   push(ref(db, `prestataires/${prestataireId}/contacts`), { client: clientNom, date });
         }
+// Firebase déjà disponible
+const app = firebase.initializeApp(firebaseConfig);
+const analytics = firebase.analytics();
+const db = firebase.database();

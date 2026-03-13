@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Inscription Prestataire</title>
+<link rel="stylesheet" href="style.css">
+<script type="module" src="auth.js"></script>
+</head>
+<body>
+<h2>Inscription Prestataire</h2>
+<input type="text" id="nom" placeholder="Nom complet">
+<input type="text" id="metier" placeholder="Métier">
+<input type="text" id="telephone" placeholder="Téléphone">
+<input type="text" id="quartier" placeholder="Quartier">
+<input type="email" id="email" placeholder="Email">
+<input type="password" id="password" placeholder="Mot de passe">
+<button onclick="registerEmail(
+  document.getElementById('nom').value,
+  document.getElementById('metier').value,
+  document.getElementById('telephone').value,
+  document.getElementById('quartier').value,
+  document.getElementById('email').value,
+  document.getElementById('password').value
+)">S'inscrire</button>
+
+<h3>Ou utiliser Google</h3>
+<button onclick="loginGoogle()">Google</button>
+
+<h3>Ou par téléphone</h3>
+<div id="recaptcha-container"></div>
+<input type="text" id="phone" placeholder="+2246xxxxxxx">
+<button onclick="setupPhoneAuth(); sendOTP(document.getElementById('phone').value)">Envoyer OTP</button>
+<input type="text" id="otp" placeholder="Code OTP">
+<button onclick="verifyOTP(document.getElementById('otp').value)">Vérifier OTP</button>
+</body>
+</html>

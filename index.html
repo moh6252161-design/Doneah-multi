@@ -1,16 +1,41 @@
 <!DOCTYPE html>
-<html>
+<html lang="fr">
 <head>
-  <title>Plateforme des Métiers</title>
-  <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<title>Plateforme Métiers</title>
+<link rel="stylesheet" href="style.css">
 </head>
+
 <body>
 
-<h1>Bienvenue 👷‍♂️</h1>
+<h1>🔧 Trouve un travailleur</h1>
 
-<a href="register.html">S'inscrire comme travailleur</a><br><br>
-<a href="login.html">Se connecter</a><br><br>
-<a href="search.html">Chercher un travailleur</a>
+<!-- INSCRIPTION -->
+<div class="box">
+<h2>Inscription (Prestataire)</h2>
 
+<input type="text" id="nom" placeholder="Nom (max 20 caractères)" maxlength="20">
+<input type="text" id="metier" placeholder="Métier (max 20)" maxlength="20">
+<input type="text" id="quartier" placeholder="Ville / Quartier (max 20)" maxlength="20">
+<input type="text" id="telephone" placeholder="Téléphone (max 15)" maxlength="15">
+<input type="email" id="email" placeholder="Email">
+<input type="password" id="password" placeholder="Mot de passe (min 6)">
+
+<button id="btnRegister">S'inscrire</button>
+</div>
+
+<!-- RECHERCHE -->
+<div class="box">
+<h2>🔎 Rechercher un travailleur</h2>
+
+<input type="text" id="searchMetier" placeholder="Métier">
+<input type="text" id="searchVille" placeholder="Ville">
+
+<button id="btnSearch">Rechercher</button>
+
+<div id="results"></div>
+</div>
+
+<script type="module" src="app.js"></script>
 </body>
 </html>
